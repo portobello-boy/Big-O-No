@@ -1,4 +1,9 @@
 import React, { Component } from 'react';
+import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+import ReactDrawer from 'react-drawer';
+
+import '@trendmicro/react-sidenav/dist/react-sidenav.css';
+import reactDrawer from 'react-drawer';
 
 class Canvas extends Component {
     constructor(props) {
@@ -63,32 +68,32 @@ class Canvas extends Component {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw dots
-        if (this.zoom > 24) {
+        // if (this.zoom > 24) {
             // Initialize context fill style
             ctx.fillStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
-            ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
+            // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
             
             // Draw small dots (boxes) or lines at intervals based on the zoom level
-            // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-            //     for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-            //         ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
-            //     }
-            // }
+            for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+                for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+                    ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
+                }
+            }
 
             // Draw lines based on zoom level
-            for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-                ctx.beginPath();
-                ctx.moveTo(i - this.zoom/24, 0);
-                ctx.lineTo(i - this.zoom/24, canvas.height);
-                ctx.stroke();
-            }
-            for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-                ctx.beginPath();
-                ctx.moveTo(0, j - this.zoom/24);
-                ctx.lineTo(canvas.width, j - this.zoom/24);
-                ctx.stroke();
-            }
-        }
+            // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+            //     ctx.beginPath();
+            //     ctx.moveTo(i - this.zoom/24, 0);
+            //     ctx.lineTo(i - this.zoom/24, canvas.height);
+            //     ctx.stroke();
+            // }
+            // for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+            //     ctx.beginPath();
+            //     ctx.moveTo(0, j - this.zoom/24);
+            //     ctx.lineTo(canvas.width, j - this.zoom/24);
+            //     ctx.stroke();
+            // }
+        // }
 
         // Define line styles based on zoom level (For Later)
         if (this.zoom > 50) {
@@ -172,7 +177,7 @@ class Canvas extends Component {
             300
         );
 
-        return false;
+        // return false;
     }
 
     mouseDown(e) {
@@ -263,12 +268,31 @@ class Canvas extends Component {
 
     render() {
         return (
+            <div>
+            <SideNav expanded="true">
+                {/* <SideNav.Toggle /> */}
+                <SideNav.Nav>
+                    <NavItem>
+                        <NavText>Hello</NavText>
+                    </NavItem>
+                    {/* <NavItem>
+                        <reactDrawer
+                            open="false"
+                            position="right"
+                        >
+                            <i onClick={() => {this.open="true"}}></i>
+                            <h2> WHAT </h2>
+                        </reactDrawer>
+                    </NavItem> */}
+                </SideNav.Nav>
+            </SideNav>
             <canvas 
                 ref="background"
                 width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
                 height={window.innerHeight - 7}
                 style={{border: '1px solid #000000'}}
             ></canvas>
+            </div>
         )
     }
 }
