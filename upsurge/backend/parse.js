@@ -28,15 +28,12 @@ function pad(s)
 	return s;
 }
 
-function checkConnective(s)
+function checkAtomic(s)
 {
-	arr = Array.from(binOps);
-	for (let i = 0; i < arr.length; ++i) {
-		if (s.indexOf(arr[i]) == 0) {
-			return arr[i].length;
-		}
-	}
-	return 0;
+	if (s.length != 1)
+		return false;
+	let re = new RegExp("[#a-zA-Z]");
+	return re.test(s)
 }
 
 function checkParens(s)
@@ -44,12 +41,13 @@ function checkParens(s)
 	stack = [];
 	length = 0;
 	for (let i = 0; i < s.length; ++i) {
-		if (s[i] == '(')
+		if (s[i] == '(') {
 			stack.push('(');
-		else if (s[i] == ')' && stack.length)
+		} else if (s[i] == ')' && stack.length) {
 			stack.pop();
-		else if (stack.length == 1 && (length = checkConnective(s.slice(i))) > 0) {
-			return [s.slice(1, i), s.slice(i, i+length), s.slice(i+length, s.length-1)];
+		} else if (stack.length == 1 && binOps.has(s[i])) {
+			o = [s.slice(1, i), (s.slice(i, i+1))[0], s.slice(i+1, s.length-1)];
+			return o;
 		}
 	}
 
@@ -71,34 +69,31 @@ function parse(s)
 	var c1 = [];
 	var c2 = [];
 
-	console.log(exp);
-
 	if (unOps.has(exp[0])) {
-		console.log("First character is", exp[0]);
+		unary = exp[0];
 		c1 = parse(exp.slice(1));
-		//console.log("c1 is", c1);
-		return c1.length ? [exp[0], c1] : [];
+		r = c1.length ? [unary, c1] : [];
+		return r;
 	}
 
 	if (exp[0] == '(' && exp[exp.length-1] == ')') {
-		console.log("Inside parens!");
 		var arr = checkParens(exp);
 		if (arr.indexOf(undefined) >= 0 || arr.indexOf('') >= 0)
 			return [];
 		else {
-			side1 = parse(arr[0]);
-			side2 = parse(arr[2]);
-			if (side1.length && side2.length)
-				return ['(', side1, arr[1], side2, ')'];
+			c1 = parse(arr[0]);
+			c2 = parse(arr[2]);
+			if (c1.length && c2.length) {
+				r = ['(', c1, arr[1], c2, ')'];
+				return r;
+			}
 			else
 				return [];
 		}
 	} else
-		return exp;
-
-	//console.log(exp);
-
-	//return exp;
+		return checkAtomic(exp) ? exp : [];
 }
+
+// console.log(parse("(NOT(A AND NOT B) AND (C OR A))"));
 
 module.exports = parse
