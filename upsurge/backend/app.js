@@ -9,6 +9,8 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
+var parse = require('./parse');
+
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -25,10 +27,9 @@ app.use('/users', usersRouter);
 // POST endpoint test for boolean expression
 app.post('/exp', function(req, res) {
   const body = req.body;
-  // console.log(req.body);
-  console.log(req.body.string);
+  //console.log(parse(body.expression));
   res.set('Content-Type', 'text/plain');
-  res.send(`You sent: ${body.string} to Express`);
+  res.send(`You sent: ${parse(body.expression)} to Express`);
 })
 
 // catch 404 and forward to error handler
