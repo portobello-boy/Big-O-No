@@ -27,9 +27,10 @@ app.use('/users', usersRouter);
 // POST endpoint test for boolean expression
 app.post('/exp', function(req, res) {
   const body = req.body;
-  //console.log(parse(body.expression));
+  parsedExp = parse(body.expression);
+  console.log("PARSED:", parse(body.expression));
   res.set('Content-Type', 'text/plain');
-  res.send(`You sent: ${parse(body.expression)} to Express`);
+  res.send(`You sent: ${parsedExp} to Express\n`);
 })
 
 // catch 404 and forward to error handler

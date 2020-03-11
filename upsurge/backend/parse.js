@@ -78,20 +78,22 @@ function parse(s)
 
 	if (exp[0] == '(' && exp[exp.length-1] == ')') {
 		var arr = checkParens(exp);
-		if (arr.indexOf(undefined) >= 0 || arr.indexOf('') >= 0)
+		if (arr.indexOf(undefined) >= 0 || arr.indexOf('') >= 0) {
 			return [];
-		else {
+		} else {
 			c1 = parse(arr[0]);
 			c2 = parse(arr[2]);
 			if (c1.length && c2.length) {
 				r = ['(', c1, arr[1], c2, ')'];
 				return r;
 			}
-			else
+			else {
 				return [];
+			}
 		}
 	} else
-		return checkAtomic(exp) ? exp : [];
+		//return checkAtomic(exp) ? exp : [];
+		return exp;
 }
 
 // console.log(parse("(NOT(A AND NOT B) AND (C OR A))"));
