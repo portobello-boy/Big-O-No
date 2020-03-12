@@ -54,12 +54,29 @@ function checkParens(s)
 	return [undefined, undefined, undefined];
 }
 
+function validateParens(s)
+{
+	let stack = [];
+	for (let i = 0; i < s.length; ++i) {
+		if (s[i] == '(')
+			stack.push('(');
+		if (s[i] == ')')
+			stack.pop();
+	}
+
+	return stack.length == 0;
+}
+
 function parse(s)
 {
 	if (s.length == 0)
 		return [];
 
 	if (typeof(s) == "string") {
+		if (!validateParens(s)) {
+			console.log("ERROR: Parentheses don't match up");
+			return "ERROR: Parentheses don't match up";
+		}
 		exp = pad(s);
 		exp = exp.split(" ");
 	} else {
@@ -96,6 +113,7 @@ function parse(s)
 		return exp;
 }
 
-// console.log(parse("(NOT(A AND NOT B) AND (C OR A))"));
+//console.log(parse("(NOT(x1 AND(x2 AND NOT x3) AND x3) AND (x1 OR x3))"));
+//console.log(parse("(C OR NOT (A AND B))"));
 
 module.exports = parse
