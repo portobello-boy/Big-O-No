@@ -1,5 +1,5 @@
-const genVals = require('../assignment');
+const assign = require('../assignment');
 
-test("Starts false", () => {
-	expect(genVals(2)[0]).toBeFalsey();
+test("Starts all false", () => {
+	expect(assign.genVals(2)[0]).toStrictEqual([false,false]);
 });

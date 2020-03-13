@@ -143,4 +143,7 @@ function parse(s)
 
 // console.log(parse("(NOT(x1 AND((x2 AND NOT x3) AND x2)) AND (x1 OR x3))"));
 
-module.exports = parse
+module.exports = {
+	parse,
+	pad
+}

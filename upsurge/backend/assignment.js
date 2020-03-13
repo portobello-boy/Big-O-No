@@ -150,4 +150,7 @@ function evalExpression(exp)
 	}
 }
 
-module.exports = evalExpression;
+module.exports = {
+	evalExpression,
+	genVals
+};
