@@ -9,7 +9,6 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-// var parse = require('./parse');
 var evaluator = require('./assignment');
 
 // view engine setup
@@ -29,14 +28,20 @@ app.use('/users', usersRouter);
 app.post('/exp', function(req, res) {
   const body = req.body;
   const exp = body.expression;
-  // const vars = body.variables;
-  const table = evaluator(exp);
 
-  console.log(table);
-
-  res.set('Content-Type', 'text/json');
-  // res.send(`Evaluated: ${JSON.stringify(table)}\n`);
-  res.json(table);
+  try {
+    const table = evaluator(exp);
+    console.log(table);
+    res.set('Content-Type', 'text/json');
+    res.status(200);
+    res.json(table);
+  } catch (err) {
+    res.status(400);
+    let msg = "There was an error parsing your boolean expression.\n";
+    msg += "Make sure that your expressions are well formed, and that each connective is wrapped in parantheses with exactly two expressions on both sides.\n";
+    res.send(msg);
+    res.end()
+  }
 })
 
 // catch 404 and forward to error handler
