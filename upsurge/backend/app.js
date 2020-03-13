@@ -9,7 +9,8 @@ var usersRouter = require('./routes/users');
 
 var app = express();
 
-var parse = require('./parse');
+// var parse = require('./parse');
+var evaluator = require('./assignment');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -27,10 +28,15 @@ app.use('/users', usersRouter);
 // POST endpoint test for boolean expression
 app.post('/exp', function(req, res) {
   const body = req.body;
-  parsedExp = parse(body.expression);
-  console.log("PARSED:", parse(body.expression));
-  res.set('Content-Type', 'text/plain');
-  res.send(`You sent: ${parsedExp} to Express\n`);
+  const exp = body.expression;
+  // const vars = body.variables;
+  const table = evaluator(exp);
+
+  console.log(table);
+
+  res.set('Content-Type', 'text/json');
+  // res.send(`Evaluated: ${JSON.stringify(table)}\n`);
+  res.json(table);
 })
 
 // catch 404 and forward to error handler
