@@ -1,4 +1,4 @@
-var parse = require('./parse');
+var parser = require('./parse');
 var operators = require('./utility')
 
 // Input: string
@@ -123,7 +123,7 @@ function evalTree(tree, assignment)
 function evalExpression(exp)
 {
 	try {
-		tree = parse(exp);
+		tree = parser.parse(exp);
 		vars = getVars(exp);
 		values = genVals(vars.length);
 		table = {};
@@ -151,6 +151,10 @@ function evalExpression(exp)
 }
 
 module.exports = {
-	evalExpression,
-	genVals
+	getVars,
+	genVals,
+	assign,
+	evalStatement,
+	evalTree,
+	evalExpression
 };

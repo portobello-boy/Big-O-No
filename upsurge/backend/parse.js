@@ -66,7 +66,7 @@ function checkParens(s)
 }
 
 // Input: string
-// Output: string
+// Output: boolean
 // Ensure that the count of open and close parentheses match
 function validateParens(s)
 {
@@ -141,9 +141,11 @@ function parse(s)
 	}
 }
 
-// console.log(parse("(NOT(x1 AND((x2 AND NOT x3) AND x2)) AND (x1 OR x3))"));
+// console.log(parse("(NOT(x1 AND((x2 AND NOT x3) AND x2)) AND (x1 OR x3))"))
 
 module.exports = {
+	pad,
+	checkParens,
+	validateParens,
 	parse,
-	pad
 }
