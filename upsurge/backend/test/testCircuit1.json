@@ -1,0 +1,31 @@
+{
+    "component1": {
+        "inputs": [
+            {
+                "name": "x1",
+                "type": "static",
+                "value": true
+            }, 
+            {
+                "name": "x2",
+                "type": "static",
+                "value": false
+            }
+        ],
+        "gates": [
+            {
+                "name": "and1",
+                "type": "and",
+                "inputs": ["x1", "x2"],
+                "outputs": ["o1"]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "o1",
+                "type": "static",
+                "inputs": ["and1"]
+            }
+        ]
+    }
+}

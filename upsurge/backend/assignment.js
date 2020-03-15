@@ -98,7 +98,6 @@ function evalStatement(arr)
 function evalTree(tree, assignment)
 {
 	try {
-		// console.log(tree, tree.length);
 		if (tree.length == 5) { // Binary expression inside of parentheses
 			var side1 = evalTree(tree[1], assignment);
 			var side2 = evalTree(tree[3], assignment);
