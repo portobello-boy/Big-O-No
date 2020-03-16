@@ -1,9 +1,31 @@
 import React, { Component } from 'react';
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
-import ReactDrawer from 'react-drawer';
+// import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+// import ReactDrawer from 'react-drawer';
 
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
-import reactDrawer from 'react-drawer';
+// import reactDrawer from 'react-drawer';
+
+import MetisMenu from 'react-metismenu';
+import 'react-metismenu/dist/react-metismenu-standart.css'
+
+const content=[
+    {
+        icon: 'icon-class-name',
+        label: 'Label of Item',
+        to: '#a-link',
+    },
+    {
+        icon: 'icon-class-name',
+        label: 'Second Item',
+        content: [
+            {
+                icon: 'icon-class-name',
+                label: 'Sub Menu of Second Item',
+                to: '#another-link',
+            },
+        ],
+    },
+];
 
 class Canvas extends Component {
     constructor(props) {
@@ -269,13 +291,14 @@ class Canvas extends Component {
     render() {
         return (
             <div>
-            <SideNav expanded="true">
-                {/* <SideNav.Toggle /> */}
+                <MetisMenu content={content} activeLinkFromLocation />
+            {/* <SideNav expanded="true">
+                <SideNav.Toggle />
                 <SideNav.Nav>
                     <NavItem>
                         <NavText>Hello</NavText>
                     </NavItem>
-                    {/* <NavItem>
+                    <NavItem>
                         <reactDrawer
                             open="false"
                             position="right"
@@ -283,9 +306,9 @@ class Canvas extends Component {
                             <i onClick={() => {this.open="true"}}></i>
                             <h2> WHAT </h2>
                         </reactDrawer>
-                    </NavItem> */}
+                    </NavItem>
                 </SideNav.Nav>
-            </SideNav>
+            </SideNav> */}
             <canvas 
                 ref="background"
                 width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?

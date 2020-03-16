@@ -56,15 +56,20 @@ function genVals(n)
 	}
 }
 
-// Input: array of strings, array of boolean values
+// Input: array of strings, array of boolean values, optional array of objects to default
 // Output: object
 // Map variable in vars to truth value in assigns
-function assign(vars, assigns)
+function assign(vars, assigns, defaults = {})
 {
 	try {
 		var assignments = {};
 		for (let i = 0; i < vars.length; ++i) {
 			assignments[vars[i]] = assigns[i];
+		}
+
+		for (variable in defaults) {
+			if (assignments[variable] != defaults[variable])
+				return false;
 		}
 		return assignments;
 	} catch (err) {
@@ -116,10 +121,10 @@ function evalTree(tree, assignment)
 	}
 }
 
-// Input: string of boolean expression
+// Input: string of boolean expression, optional array of assignments to default
 // Output: object
 // Evaluate a boolean expression string, return object with truth values for variables and output
-function evalExpression(exp)
+function evalExpression(exp, defaults = {})
 {
 	try {
 		tree = parser.parse(exp);
@@ -132,7 +137,11 @@ function evalExpression(exp)
 		table[exp] = [];
 
 		for (let i = 0; i < values.length; ++i) {
-			assignment = assign(vars, values[i]);
+			assignment = assign(vars, values[i], defaults);
+			if (!assignment) {
+				continue;
+			}
+
 			result = evalTree(tree, assignment);
 
 			for (let j = 0; j < vars.length; ++j) {
