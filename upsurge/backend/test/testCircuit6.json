@@ -1,0 +1,72 @@
+{
+    "component1": {
+        "inputs": [
+            {
+                "name": "x1",
+                "type": "static",
+                "value": true
+            }, 
+            {
+                "name": "x2",
+                "type": "static",
+                "value": true
+            },
+            {
+                "name": "x3",
+                "type": "static",
+                "value": true
+            }
+        ],
+        "gates": [
+            {
+                "name": "box",
+                "type": "component",
+                "inputs": ["x1", "x2"]
+            },
+            {
+                "name": "and1",
+                "type": "and",
+                "inputs": ["box", "x3"]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "o1",
+                "type": "static",
+                "inputs": ["and1"]
+            }
+        ]
+    },
+    "box": {
+        "inputs": [
+            {
+                "name": "y1",
+                "type": "placeholder"
+            },
+            {
+                "name": "y2",
+                "type": "placeholder"
+            },
+            {
+                "name": "z1",
+                "type": "static",
+                "value": true
+            }
+        ], 
+        "gates": [
+            {
+                "name": "and",
+                "type": "and",
+                "inputs": ["y1", "y2", "z1"]
+            }
+
+        ],
+        "outputs": [
+            {
+                "name": "p1",
+                "type": "placeholder",
+                "inputs": ["and"]
+            }
+        ]
+    }
+}

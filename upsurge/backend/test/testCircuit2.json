@@ -1,0 +1,42 @@
+{
+    "component1": {
+        "inputs": [
+            {
+                "name": "x1",
+                "type": "static",
+                "value": true
+            }, 
+            {
+                "name": "x2",
+                "type": "static",
+                "value": false
+            },
+            {
+                "name": "x3",
+                "type": "static",
+                "value": true
+            }
+        ],
+        "gates": [
+            {
+                "name": "and1",
+                "type": "and",
+                "inputs": ["x1", "x2"],
+                "outputs": ["or1"]
+            },
+            {
+                "name": "or1",
+                "type": "or",
+                "inputs": ["and1", "x3"],
+                "outputs": ["o1"]
+            }
+        ],
+        "outputs": [
+            {
+                "name": "o1",
+                "type": "static",
+                "inputs": ["or1"]
+            }
+        ]
+    }
+}
