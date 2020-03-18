@@ -1,24 +1,68 @@
 const parser = require('../parse');
 
-const expr = "(x1 AND (x2 OR x3))";
-const parens = parser.checkParens(parser.pad(expr).split(" "));
+const validExprs = [
+	"x1",
+	"(x1 and x2)",
+	"not x1",
+	"not (x1 and x2)",
+	"(not x1 and x2)", 
+	"(x1 and not x2)",
+	"((x1 and x2) and not x3)",
+	"(x1 AND (x2 OR x3))"
+];
 
-test("Pad expression ~(b AND c) OR a", () => {
-	expect(parser.pad("~(b AND c) OR a")).toBe("( ~ ( b AND c ) OR a )");
-});
+const validExprsPad = [
+	"x1",
+	"( x1 and x2 )",
+	"not x1",
+	"not ( x1 and x2 )",
+	"( not x1 and x2 )", 
+	"( x1 and not x2 )",
+	"( ( x1 and x2 ) and not x3 )",
+	"( x1 AND ( x2 OR x3 ) )"
+];
 
-test("Return parse-tree separation on outer parens of (x1 AND (x2 OR x3))", () => {
-	expect(parens).toStrictEqual([['x1'], 'AND', ['(', 'x2', 'OR', 'x3', ')']]);
-});
+const validExprsTrees = [
+	['x1'],
+	['(', ['x1'], 'and', ['x2'], ')'],
+	['not', ['x1']],
+	['not', ['(', ['x1'], 'and', ['x2'], ')']],
+	['(', ['not', ['x1']], 'and', ['x2'], ')'],
+	['(', ['x1'], 'and', ['not', ['x2']], ')'],
+	['(', ['(', ['x1'], 'and', ['x2'], ')'], 'and', ['not', ['x3']], ')'],
+	['(', ['x1'], 'AND', ['(', ['x2'], 'OR', ['x3'], ')'], ')']
+];
 
-test("Validate that parens are equal in expression (x1 AND (x2 OR x3))", () => {
-	expect(parser.validateParens(expr)).toStrictEqual(true);
-});
+const invalidParens = [
+	"(x1",
+	"(x1 and x2))",
+	"(x1 and (x2)",
+	"((x1 and x2)",
+	"(x1 and (x2 and not x3)))"
+];
 
-test("Validate that parens are not equal in expression (x1 AND ((x2 OR x3))", () => {
-	expect(parser.validateParens("(x1 AND ((x2 OR x3))")).toStrictEqual(false);
-});
+console.log("List of valid expressions:", validExprs);
 
-test("Generate parse tree from expression (x1 AND (x2 OR x3))", () => {
-	expect(parser.parse("(x1 AND (x2 OR x3))")).toStrictEqual(['(', ['x1'], 'AND', ['(', ['x2'], 'OR', ['x3'], ')'], ')']);
-});
+for (let i = 0; i < validExprs.length; ++i) {
+	test("Test pad function", () => {
+		expect(parser.pad(validExprs[i])).toMatch(validExprsPad[i]);
+	});
+
+	test("Test parse function", () => {
+		expect(parser.parse(validExprs[i])).toStrictEqual(validExprsTrees[i]);
+	});
+
+	test("Test paren validation", () => {
+		expect(parser.validateParens(validExprs[i])).toBeTruthy();
+	});
+}
+
+for (let i = 0; i < invalidParens.length; ++i) {
+	test("Find invalid parens", () => {
+		expect(parser.validateParens(invalidParens[i])).toBeFalsy();
+	});
+
+	test("Parse fails on invalid parens", () => {
+		expect(parser.parse(invalidParens[i])).toMatch("ERROR: Parentheses do not match up");
+	});
+}

@@ -6,11 +6,6 @@ var operators = require('./utility')
 function pad(s)
 {
 	try {
-		// Ensure the expression is wrapped in parentheses
-		if (s[0] != '(' || s[s.length-1] != ')') {
-			s = '(' + s.concat(')');
-		}
-
 		// Pad spaces around every set of parentheses
 		for (let i = 0; i < s.length; ++i) {
 			if (i != 0 && s[i-1] != ' ' && s[i] == '(') {
@@ -57,11 +52,12 @@ function checkParens(s)
 			}
 		}
 
-		throw "Error checking parens";
+		throw new Error("Error checking parens");
 	} catch (err) {
 		console.log("ERROR: checkParens");
+		console.log("Given:", s);
 		console.log(err.message);
-		throw new Error("Error checking parens for boolean expression " + s);
+		throw err;
 	}
 }
 
@@ -71,15 +67,15 @@ function checkParens(s)
 function validateParens(s)
 {
 	try {
-		let stack = [];
+		let count = 0;
 		for (let i = 0; i < s.length; ++i) {
 			if (s[i] == '(')
-				stack.push('(');
+				++count;
 			if (s[i] == ')')
-				stack.pop();
+				--count;
 		}
 
-		return stack.length == 0;
+		return count == 0;
 	} catch (err) {
 		console.log("ERROR: validateParens");
 		console.log(err.message);
@@ -137,11 +133,9 @@ function parse(s)
 	} catch (err) {
 		console.log("ERROR: parse");
 		console.log(err.message);
-		throw new Error("Error parsing boolean expression " + s);
+		throw err;
 	}
 }
-
-// console.log(parse("(NOT(x1 AND((x2 AND NOT x3) AND x2)) AND (x1 OR x3))"))
 
 module.exports = {
 	pad,

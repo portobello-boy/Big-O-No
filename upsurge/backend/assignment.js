@@ -158,6 +158,8 @@ function evalExpression(exp, defaults = {})
 	}
 }
 
+// console.log(evalExpression("not x1"))
+
 module.exports = {
 	getVars,
 	genVals,

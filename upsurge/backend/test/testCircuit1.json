@@ -14,9 +14,9 @@
         ],
         "gates": [
             {
-                "name": "and1",
-                "type": "and",
-                "inputs": ["x1", "x2"],
+                "name": "not1",
+                "type": "not",
+                "inputs": ["x1"],
                 "outputs": ["o1"]
             }
         ],
@@ -24,7 +24,7 @@
             {
                 "name": "o1",
                 "type": "static",
-                "inputs": ["and1"]
+                "inputs": ["not1"]
             }
         ]
     }
