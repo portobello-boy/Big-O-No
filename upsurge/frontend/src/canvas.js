@@ -1,31 +1,39 @@
 import React, { Component } from 'react';
-// import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
-// import ReactDrawer from 'react-drawer';
+import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
+import ReactDrawer from 'react-drawer';
+import Minimap from 'react-minimap';
+import MetisMenu from 'react-metismenu';
+import './react-metismenu-standart.css';
 
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
-// import reactDrawer from 'react-drawer';
-
-import MetisMenu from 'react-metismenu';
-import 'react-metismenu/dist/react-metismenu-standart.css'
+import reactDrawer from 'react-drawer';
 
 const content=[
-    {
-        icon: 'icon-class-name',
-        label: 'Label of Item',
-        to: '#a-link',
-    },
-    {
-        icon: 'icon-class-name',
-        label: 'Second Item',
-        content: [
-            {
-                icon: 'icon-class-name',
-                label: 'Sub Menu of Second Item',
-                to: '#another-link',
-            },
-        ],
-    },
+	{
+		icon: 'icon-class-name',
+		label: 'MENU',
+		to: '#a-link',
+	
+	},
+	{
+		icon: 'icon-class-name',
+		label: 'Components',
+		content: [
+			{
+			icon: 'icon-class-name',
+			label: 'sub menu item 1.0',
+			to: '#other-link',
+			},
+			{
+			icon: 'icon-class-name',
+			label: 'sub menu item 2.0',
+			to: '#other-link',
+			},
+			
+		],
+	},
 ];
+
 
 class Canvas extends Component {
     constructor(props) {
@@ -291,13 +299,25 @@ class Canvas extends Component {
     render() {
         return (
             <div>
-                <MetisMenu content={content} activeLinkFromLocation />
-            {/* <SideNav expanded="true">
-                <SideNav.Toggle />
-                <SideNav.Nav>
+		<MetisMenu content={content} activeLinkFromLocation />
+		{/*	<SideNav expanded="true">
+        
+		<SideNav.Toggle />
+		<SideNav.Nav>
                     <NavItem>
                         <NavText>Hello</NavText>
                     </NavItem>
+		    <NavItem>
+			<NavText> Component 2 </NavText>
+		    </NavItem>
+		    <NavItem>
+			<div className = "menu">
+			<button> Component 1 </button>
+			<button> Component 2 </button>
+			<button> Component 3 </button>
+			<button> Component 4 </button>
+		    </div>
+		    </NavItem>
                     <NavItem>
                         <reactDrawer
                             open="false"
@@ -308,8 +328,24 @@ class Canvas extends Component {
                         </reactDrawer>
                     </NavItem>
                 </SideNav.Nav>
-            </SideNav> */}
-            <canvas 
+            </SideNav>
+		*/}
+	<div>
+	<Minimap selector=".card">
+		width={window.innerWidth-5}
+		height={window.innerHeight-200}
+	    <div className="card">
+	    	<h1>Name</h1>
+	    	</div>
+	    <div className="card">
+	    	<h1>Title 2</h1>
+	    	<div className="card">
+	    		<h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
+	    	</div>
+	    </div>
+	    </Minimap>
+	</div>
+		<canvas 
                 ref="background"
                 width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
                 height={window.innerHeight - 7}
