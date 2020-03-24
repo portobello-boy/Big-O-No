@@ -1,0 +1,30 @@
+{
+    "component": {
+        "inputs": [
+            {
+                "name": "x",
+                "type": "static",
+                "value": true
+            },
+            {
+                "name": "y",
+                "type": "placeholder"
+            }
+        ], 
+        "gates": [
+            {
+                "name": "and",
+                "type": "and",
+                "inputs": ["x", "y"]
+            }
+
+        ],
+        "outputs": [
+            {
+                "name": "o1",
+                "type": "static",
+                "inputs": ["and"]
+            }
+        ]
+    }
+}
