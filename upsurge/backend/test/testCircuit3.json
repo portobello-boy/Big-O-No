@@ -14,7 +14,7 @@
             {
                 "name": "x3",
                 "type": "static",
-                "value": true
+                "value": false
             }
         ],
         "gates": [

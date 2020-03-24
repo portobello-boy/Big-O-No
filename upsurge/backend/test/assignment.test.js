@@ -1,27 +1,33 @@
 const assign = require('../assignment');
+const testUtils = require('../testUtils');
 
-test("Get variables for expression: '(x1 AND x2) XOR x3'", () => {
-	expect(assign.getVars("(x1 AND x2) XOR x3")).toStrictEqual(['x1', 'x2', 'x3']);
-});
+for (let i = 0; i < testUtils.validExprs; ++i) {
+    test("Get variables for expression", () => {
+        expect(assign.getVars(testUtils.validExprs[i])).toStrictEqual(testUtils.validExprsVars[i]);
+    });
+}
 
-test("Get variables for expression: '(x1 ∧ x2) ⊕ x3'", () => {
-	expect(assign.getVars("(x1 ∧ x2) ⊕ x3")).toStrictEqual(['x1', 'x2', 'x3']);
-});
+for (let i = 0; i < testUtils.twoVarAssignments; ++i) {
+    test("Generate all true-false assignment for 2 variables", () => {
+        expect(assign.genVals(2)[i]).toStrictEqual(twoVarAssignments[i]);
+    });
+}
 
-test("Generate all false values for 2 variables", () => {
-	expect(assign.genVals(2)[0]).toStrictEqual([false,false]);
-});
-
-test("Generate all true-false assignments for 2 variables", () => {
-	expect(assign.genVals(2)).toStrictEqual([[false, false], 
-												[false, true],
-												[true, false],
-												[true, true]]);
-});
+for (let i = 0; i < testUtils.threeVarAssignments; ++i) {
+    test("Generate all true-false assignment for 3 variables", () => {
+        expect(assign.genVals(3)[i]).toStrictEqual(threeVarAssignments[i]);
+    });
+}
 
 test("Assign to variables ['x1'] the values [false]", () => {
 	expect(assign.assign(['x1'], [false])).toStrictEqual({
 		'x1': false
+	});
+});
+
+test("Assign to variables ['x1'] the values [true]", () => {
+	expect(assign.assign(['x1'], [true])).toStrictEqual({
+		'x1': true
 	});
 });
 
@@ -37,11 +43,11 @@ test("Evaluate expression tree ['(', [ '(', [ 'x1' ], 'AND', [ 'x2' ], ')' ], 'X
 	expect(assign.evalTree(['(', [ '(', [ 'x1' ], 'AND', [ 'x2' ], ')' ], 'XOR', [ 'x3' ], ')'], {'x1': true, 'x2': false, 'x3': true})).toStrictEqual([true]);
 });
 
-test("Generate truth table for expression (x1 AND x2) XOR x3", () => {
-	expect(assign.evalExpression("(x1 AND x2) XOR x3")).toStrictEqual({
+test("Generate truth table for expression ((x1 AND x2) XOR x3)", () => {
+	expect(assign.evalExpression("((x1 AND x2) XOR x3)")).toStrictEqual({
 		'x1': [false, false, false, false, true, true, true, true],
 		'x2': [false, false, true, true, false, false, true, true],
 		'x3': [false, true, false, true, false, true, false, true],
-		'(x1 AND x2) XOR x3': [false, true, false, true, false, true, true, false]
+		'((x1 AND x2) XOR x3)': [false, true, false, true, false, true, true, false]
 	});
 });

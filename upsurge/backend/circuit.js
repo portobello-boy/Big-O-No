@@ -1,5 +1,6 @@
 var parser = require('./parse');
 var assign = require('./assignment');
+var operators = require('./utility');
 
 // Input: component subcircuit, name of element in component
 // Return: JSON object
@@ -44,13 +45,18 @@ function getSubExpr(circuit, component, stage)
         }
         arr.push(compExpr);
     } else { // No referenced component
-        for (let i = 1; i < stage.inputs.length; ++i) {
-            arr.push('('); // Prepend a bunch of parentheses
-        }
-        arr.push(getSubExpr(circuit, component, getSubComp(component, stage.inputs[0])));
+        if (operators.unOps.has(stage.type)) {
+            console.log("Circuit is unary:", stage);
+            arr.push(stage.type, getSubExpr(circuit, component, getSubComp(component, stage.inputs[0])));
+        } else {
+            for (let i = 1; i < stage.inputs.length; ++i) {
+                arr.push('('); // Prepend a bunch of parentheses
+            }
+            arr.push(getSubExpr(circuit, component, getSubComp(component, stage.inputs[0])));
 
-        for (let i = 1; i < stage.inputs.length; ++i) {
-            arr.push(stage.type, getSubExpr(circuit, component, getSubComp(component, stage.inputs[i])), ')'); // Push subexressions
+            for (let i = 1; i < stage.inputs.length; ++i) {
+                arr.push(stage.type, getSubExpr(circuit, component, getSubComp(component, stage.inputs[i])), ')'); // Push subexressions
+            }
         }
     }
 
@@ -147,6 +153,7 @@ function evaluateComponent(circuit, component)
         evals[val] = [assignment[val]];
     }
     for (expression of expressions) {
+        console.log("expression:", expression);
         evals[expression] = assign.evalTree(parser.parse(expression), assignment);
     }
     return evals;
@@ -166,16 +173,17 @@ function getDefaults(component)
 function evaluateCircuit(circuit)
 {
     let evals = [];
+    let evaluation;
     for (component in circuit) {
         if (isComplete(circuit[component])) {
-            let eval = evaluateComponent(circuit, circuit[component]);
-            evals.push(eval);
+            evaluation = evaluateComponent(circuit, circuit[component]);
+            evals.push(evaluation);
         } else {
             let expressions = generateComponentExprs(circuit, circuit[component]);
             let defaults = getDefaults(circuit[component]);
             for (expr of expressions) {
-                let eval = assign.evalExpression(expr, defaults);
-                evals.push(eval);
+                let evaluation = assign.evalExpression(expr, defaults);
+                evals.push(evaluation);
             }
         }
     }
@@ -189,20 +197,7 @@ module.exports = {
     generateCircuitExprs,
     getCompAssignment,
     evaluateComponent,
+    isConnected,
+    isComplete,
     evaluateCircuit
 }
-
-var json = require('./test/testCircuit7.json');
-// console.log(generateCircuitExprs(json));
-// console.log(evaluateComponent(json, json.component1));
-
-// var input = getComponent(json.component1, 'and1');
-// console.log(getSubExpr(json.component1, input));
-// exprs = evaluateCircuit(json);
-// console.log(exprs);
-// console.log(assign.evalExpression(exprs[0]));
-
-// console.log(getCompAssignment(json, json.component1));
-// console.log(evaluateComponent(json, json.component1));
-console.log(evaluateCircuit(json));
-// console.log(isConnected(json.component1));

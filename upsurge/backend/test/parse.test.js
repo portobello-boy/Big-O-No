@@ -1,24 +1,28 @@
 const parser = require('../parse');
+const testUtils = require('../testUtils');
 
-const expr = "(x1 AND (x2 OR x3))";
-const parens = parser.checkParens(parser.pad(expr).split(" "));
+console.log("List of valid expressions:", testUtils.validExprs);
 
-test("Pad expression ~(b AND c) OR a", () => {
-	expect(parser.pad("~(b AND c) OR a")).toBe("( ~ ( b AND c ) OR a )");
-});
+for (let i = 0; i < testUtils.validExprs.length; ++i) {
+	test("Test pad function", () => {
+		expect(parser.pad(testUtils.validExprs[i])).toMatch(testUtils.validExprsPad[i]);
+	});
 
-test("Return parse-tree separation on outer parens of (x1 AND (x2 OR x3))", () => {
-	expect(parens).toStrictEqual([['x1'], 'AND', ['(', 'x2', 'OR', 'x3', ')']]);
-});
+	test("Test parse function", () => {
+		expect(parser.parse(testUtils.validExprs[i])).toStrictEqual(testUtils.validExprsTrees[i]);
+	});
 
-test("Validate that parens are equal in expression (x1 AND (x2 OR x3))", () => {
-	expect(parser.validateParens(expr)).toStrictEqual(true);
-});
+	test("Test paren validation", () => {
+		expect(parser.validateParens(testUtils.validExprs[i])).toBeTruthy();
+	});
+}
 
-test("Validate that parens are not equal in expression (x1 AND ((x2 OR x3))", () => {
-	expect(parser.validateParens("(x1 AND ((x2 OR x3))")).toStrictEqual(false);
-});
+for (let i = 0; i < testUtils.invalidParens.length; ++i) {
+	test("Find invalid parens", () => {
+		expect(parser.validateParens(testUtils.invalidParens[i])).toBeFalsy();
+	});
 
-test("Generate parse tree from expression (x1 AND (x2 OR x3))", () => {
-	expect(parser.parse("(x1 AND (x2 OR x3))")).toStrictEqual(['(', ['x1'], 'AND', ['(', ['x2'], 'OR', ['x3'], ')'], ')']);
-});
+	test("Parse fails on invalid parens", () => {
+		expect(parser.parse(testUtils.invalidParens[i])).toMatch("ERROR: Parentheses do not match up");
+	});
+}
