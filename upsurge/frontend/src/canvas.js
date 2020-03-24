@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
 import ReactDrawer from 'react-drawer';
 import Minimap from 'react-minimap';
+import 'react-minimap/dist/react-minimap.css';
 import MetisMenu from 'react-metismenu';
 import './react-metismenu-standart.css';
 
