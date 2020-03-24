@@ -1,5 +1,5 @@
 const parser = require('../parse');
-const testUtils = require('../testUtils');
+const testUtils = require('./testUtils');
 
 console.log("List of valid expressions:", testUtils.validExprs);
 

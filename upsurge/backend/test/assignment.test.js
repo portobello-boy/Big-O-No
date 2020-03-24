@@ -1,5 +1,5 @@
 const assign = require('../assignment');
-const testUtils = require('../testUtils');
+const testUtils = require('./testUtils');
 
 for (let i = 0; i < testUtils.validExprs; ++i) {
     test("Get variables for expression", () => {
