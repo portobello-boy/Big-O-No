@@ -10,7 +10,7 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 var evaluator = require('./assignment');
-var circuit = requite('./circuit');
+var circuit = require('./circuit');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
