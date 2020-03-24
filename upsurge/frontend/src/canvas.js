@@ -296,7 +296,6 @@ class Canvas extends Component {
         this.draw();
     }
 
-
     render() {
         return (
             <div>
@@ -332,10 +331,11 @@ class Canvas extends Component {
             </SideNav>
 		*/}
 	<div>
-	<Minimap selector=".card">
+	<Minimap selector=".area">
 		width={window.innerWidth-5}
 		height={window.innerHeight-200}
-	    <div className="card">
+	    
+		{/*<div className="card">
 	    	<h1>Name</h1>
 	    	</div>
 	    <div className="card">
@@ -343,15 +343,17 @@ class Canvas extends Component {
 	    	<div className="card">
 	    		<h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
 	    	</div>
-	    </div>
-	    </Minimap>
-	</div>
+	    </div> */}
+
 		<canvas 
+		class="area"
                 ref="background"
                 width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
                 height={window.innerHeight - 7}
                 style={{border: '1px solid #000000'}}
             ></canvas>
+	    </Minimap>
+	</div>
             </div>
         )
     }
