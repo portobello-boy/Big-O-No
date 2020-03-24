@@ -231,11 +231,31 @@ describe('test evaluateCircuit', () => {
         }])
     });
     
-    // test('evaluateCircuit tc5', () => {
-    //     expect(circuit.evaluateCircuit(tc5)).toStrictEqual([{}])
-    // });
+    test('evaluateCircuit tc5', () => {
+        expect(circuit.evaluateCircuit(tc5)).toStrictEqual([{
+            'x1': [true],
+            'x2': [true],
+            'x3': [true],
+            '( ( x1 xor x2 ) and x3 )': [false]
+        }, {
+            'y1': [false, false, true, true],
+            'y2': [false, true, false, true],
+            '( y1 xor y2 )': [false, true, true, false]
+        }])
+    });
     
-    // test('evaluateCircuit tc6', () => {
-    //     expect(circuit.evaluateCircuit(tc6)).toStrictEqual([{}])
-    // });
+    test('evaluateCircuit tc6', () => {
+        expect(circuit.evaluateCircuit(tc6)).toStrictEqual([{
+            'x1': [true],
+            'x2': [true],
+            'x3': [true],
+            'z1': [true],
+            '( ( ( x1 and x2 ) and z1 ) and x3 )': [true]
+        }, {
+            'y1': [false, false, true, true],
+            'y2': [false, true, false, true],
+            'z1': [true, true, true, true], 
+            '( ( y1 and y2 ) and z1 )': [false, false, false, true]
+        }])
+    });
 });
