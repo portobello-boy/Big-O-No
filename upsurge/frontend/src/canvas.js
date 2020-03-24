@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import Minimap from 'react-minimap';
+import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
 
 class Canvas extends Component {
