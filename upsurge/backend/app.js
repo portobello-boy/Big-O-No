@@ -10,7 +10,7 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 var evaluator = require('./assignment');
-var circuit = requite('./circuit');
+var circuit = require('./circuit');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -31,12 +31,14 @@ app.post('/exp', function(req, res) {
   const exp = body.expression;
 
   try {
-    const table = evaluator(exp);
+    const table = evaluator.evalExpression(exp);
     console.log(table);
     res.set('Content-Type', 'text/json');
     res.status(200);
     res.json(table);
   } catch (err) {
+    console.log(err);
+    console.log(err.message);
     res.status(400);
     let msg = "There was an error parsing your boolean expression.\n";
     msg += "Make sure that your expressions are well formed, and that each connective is wrapped in parantheses with exactly two expressions on both sides.\n";
@@ -55,6 +57,8 @@ app.post('/circuit', function(req, res) {
     res.status(200);
     res.json(evaluation);
   } catch (err) {
+    console.log(err);
+    console.log(err.message);
     res.status(400);
     let msg = "There was an error parsing your circuit.\n";
     msg += "Make sure that you follow the specified format, and check the testing files for examples.\n";
