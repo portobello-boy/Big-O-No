@@ -278,6 +278,9 @@ class Canvas extends Component {
 	<div>
                 <div class="sidenav">
                 <button type="button" class="collapsible">Inputs</button>
+		    <div class="content">
+			<p>Inputs</p>
+		    </div>
 
                 <button type="button" class="collapsible">Gates</button>
 
