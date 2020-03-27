@@ -298,7 +298,9 @@ class Canvas extends Component {
 
     render() {
         return (
+	    /*
             <div>
+<<<<<<< Updated upstream
 		<MetisMenu content={content} activeLinkFromLocation />
 		{/*	<SideNav expanded="true">
         
@@ -351,6 +353,99 @@ class Canvas extends Component {
                 height={window.innerHeight - 7}
                 style={{border: '1px solid #000000'}}
             ></canvas>
+=======
+                <div class="sidenav">
+                <button type="button" class="collapsible">Inputs</button>
+                    <div class="content">
+                        <p> Inputs </p>
+                    </div>
+                <button type="button" class="collapsible">Gates</button>
+                    <div class="content">
+                        <p> Gates </p>
+                    </div>
+                <button type="button" class="collapsible">Outputs</button>
+                    <div class="content">
+                        <p> Outpus </p>
+                    </div>
+                </div>
+              */
+<div>
+                <div class="sidenav">
+                <button type="button" class="collapsible">Inputs</button>
+
+                <button type="button" class="collapsible">Gates</button>
+
+                    <div class="content">
+		    	<div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
+                        <p> AND Gate
+                        <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> OR Gate
+                        <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> NOR Gate
+                        <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> XOR Gate
+                        <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> NAND Gate
+                        <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> NOT Gate
+                        <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+                     </div>
+
+                <button type="button" class="collapsible">Outputs</button>
+                    <div class="content">
+                        <p> Outpus </p>
+                    </div>
+                </div>
+
+
+                <div>
+                    <Minimap selector=".area">
+                        width={window.innerWidth-5}
+                        height={window.innerHeight-200}
+                        
+                        {/*<div className="card">
+                            <h1>Name</h1>
+                            </div>
+                        <div className="card">
+                            <h1>Title 2</h1>
+                            <div className="card">
+                                <h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
+                            </div>
+                        </div> */}
+
+                        <canvas 
+                        class="area"
+                            ref="background"
+                            width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
+                            height={window.innerHeight - 7}
+                            style={{border: '1px solid #000000'}}
+                        ></canvas>
+                    </Minimap>
+                </div>
+>>>>>>> Stashed changes
             </div>
         )
     }
