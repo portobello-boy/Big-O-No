@@ -275,22 +275,59 @@ class Canvas extends Component {
 
     render() {
         return (
-            <div>
+	<div>
                 <div class="sidenav">
                 <button type="button" class="collapsible">Inputs</button>
-                    <div class="content">
-                        <p> Inputs </p>
-                    </div>
+		    <div class="content">
+			<p>Inputs</p>
+		    </div>
+
                 <button type="button" class="collapsible">Gates</button>
+
                     <div class="content">
-                        <p> Gates </p>
-                    </div>
+		    	<div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
+                        <p> AND Gate
+                        <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> OR Gate
+                        <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> NOR Gate
+                        <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> XOR Gate
+                        <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> NAND Gate
+                        <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+		    	<div class="gate">
+                        <p> NOT Gate
+                        <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40">
+                        </img>
+                        </p>
+			</div>
+                     </div>
+
                 <button type="button" class="collapsible">Outputs</button>
                     <div class="content">
-                        <p> Outpus </p>
+                        <p> Outputs </p>
                     </div>
                 </div>
-                
                 <div>
                     <Minimap selector=".area">
                         width={window.innerWidth-5}
