@@ -1,39 +1,7 @@
 import React, { Component } from 'react';
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
-import ReactDrawer from 'react-drawer';
 import Minimap from 'react-minimap';
-import MetisMenu from 'react-metismenu';
-import './react-metismenu-standart.css';
-
-import '@trendmicro/react-sidenav/dist/react-sidenav.css';
-import reactDrawer from 'react-drawer';
-
-const content=[
-	{
-		icon: 'icon-class-name',
-		label: 'MENU',
-		to: '#a-link',
-	
-	},
-	{
-		icon: 'icon-class-name',
-		label: 'Components',
-		content: [
-			{
-			icon: 'icon-class-name',
-			label: 'sub menu item 1.0',
-			to: '#other-link',
-			},
-			{
-			icon: 'icon-class-name',
-			label: 'sub menu item 2.0',
-			to: '#other-link',
-			},
-			
-		],
-	},
-];
-
+import 'react-minimap/dist/react-minimap.css';
+import './canvas.css'
 
 class Canvas extends Component {
     constructor(props) {
@@ -48,6 +16,7 @@ class Canvas extends Component {
         this.mouseDown = this.mouseDown.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
+        this.openDrawer = this.openDrawer.bind(this);
 
         // Define variables
         this.zoom = 100;
@@ -88,10 +57,6 @@ class Canvas extends Component {
         const canvas = this.refs.background // Grab the actual canvas element by reference
         const ctx = canvas.getContext("2d") // Create drawing object (context)
 
-        // console.log("DIM: ", canvas.height, canvas.width);
-        // console.log("SCROLL", this.settings.scrollAnimation, this.scrollAnimation.v, this.scrollAnimation.r, this.scrollAnimation.animate);
-        // console.log("ZOOM: ", this.settings.zoomAnimation, this.zoom, this.zoomAnimation);
-
         // Initialize context data
         ctx.imageSmoothingEnabled = true;
         ctx.fillStyle = "#fff";
@@ -100,7 +65,7 @@ class Canvas extends Component {
         // Draw dots
         // if (this.zoom > 24) {
             // Initialize context fill style
-            ctx.fillStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
+            ctx.fillStyle = "rgba(200,200,200," + Math.min(1, this.zoom / 100) + ")";
             // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
             
             // Draw small dots (boxes) or lines at intervals based on the zoom level
@@ -220,8 +185,6 @@ class Canvas extends Component {
         this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
 
-        console.log("mousedwn", e.which, e.ctrlKey);
-
         // XXX For whatever reason, without clicking, the event.which default value is 1,
         //     instead of 0. Right now, dragging can only be done by holding ctrl. So, this
         //     listener doesn't do anything at the moment - it does not trigger mouseMove,
@@ -246,8 +209,6 @@ class Canvas extends Component {
         this.mouse.screen.y = e.y;
         this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
-
-        console.log("mousemv", e.which, e.ctrlKey);
 
         if (e.which === 1) { // Left-Click
             if (e.ctrlKey) {
@@ -278,6 +239,17 @@ class Canvas extends Component {
         }
     }
 
+    openDrawer(e) {
+        e.srcElement.classList.toggle("active");
+        var content = e.srcElement.nextElementSibling;
+
+        if (content.style.maxHeight){
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        } 
+    }
+
     /* 
     **  Mount this Component
     **  Initialize listeners and call draw()
@@ -291,85 +263,19 @@ class Canvas extends Component {
         canvas.addEventListener('mousemove', this.mouseMove);   // Mouse movement - dragging components, dragging screen
         canvas.addEventListener('mouseup', this.mouseUp);       // Mouse up - dragging screen
 
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; ++i) {
+            console.log(i);
+            collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
+        }
+
         // Make call to draw() method
         this.draw();
     }
 
-
     render() {
         return (
-	    /*
-            <div>
-<<<<<<< Updated upstream
-		<MetisMenu content={content} activeLinkFromLocation />
-		{/*	<SideNav expanded="true">
-        
-		<SideNav.Toggle />
-		<SideNav.Nav>
-                    <NavItem>
-                        <NavText>Hello</NavText>
-                    </NavItem>
-		    <NavItem>
-			<NavText> Component 2 </NavText>
-		    </NavItem>
-		    <NavItem>
-			<div className = "menu">
-			<button> Component 1 </button>
-			<button> Component 2 </button>
-			<button> Component 3 </button>
-			<button> Component 4 </button>
-		    </div>
-		    </NavItem>
-                    <NavItem>
-                        <reactDrawer
-                            open="false"
-                            position="right"
-                        >
-                            <i onClick={() => {this.open="true"}}></i>
-                            <h2> WHAT </h2>
-                        </reactDrawer>
-                    </NavItem>
-                </SideNav.Nav>
-            </SideNav>
-		*/}
 	<div>
-	<Minimap selector=".card">
-		width={window.innerWidth-5}
-		height={window.innerHeight-200}
-	    <div className="card">
-	    	<h1>Name</h1>
-	    	</div>
-	    <div className="card">
-	    	<h1>Title 2</h1>
-	    	<div className="card">
-	    		<h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
-	    	</div>
-	    </div>
-	    </Minimap>
-	</div>
-		<canvas 
-                ref="background"
-                width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
-                height={window.innerHeight - 7}
-                style={{border: '1px solid #000000'}}
-            ></canvas>
-=======
-                <div class="sidenav">
-                <button type="button" class="collapsible">Inputs</button>
-                    <div class="content">
-                        <p> Inputs </p>
-                    </div>
-                <button type="button" class="collapsible">Gates</button>
-                    <div class="content">
-                        <p> Gates </p>
-                    </div>
-                <button type="button" class="collapsible">Outputs</button>
-                    <div class="content">
-                        <p> Outpus </p>
-                    </div>
-                </div>
-              */
-<div>
                 <div class="sidenav">
                 <button type="button" class="collapsible">Inputs</button>
 
@@ -416,11 +322,9 @@ class Canvas extends Component {
 
                 <button type="button" class="collapsible">Outputs</button>
                     <div class="content">
-                        <p> Outpus </p>
+                        <p> Outputs </p>
                     </div>
                 </div>
-
-
                 <div>
                     <Minimap selector=".area">
                         width={window.innerWidth-5}
@@ -445,7 +349,6 @@ class Canvas extends Component {
                         ></canvas>
                     </Minimap>
                 </div>
->>>>>>> Stashed changes
             </div>
         )
     }

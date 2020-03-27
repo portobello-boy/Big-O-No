@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 var app = express();
 
 var evaluator = require('./assignment');
+var circuit = requite('./circuit');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -42,7 +43,25 @@ app.post('/exp', function(req, res) {
     res.send(msg);
     res.end()
   }
-})
+});
+
+// POST endpoint for circuitry
+app.post('/circuit', function(req, res) {
+  const body = req.body;
+  
+  try {
+    const evaluation = circuit.evaluateCircuit(body);
+    res.set('Content-Type', 'text/json');
+    res.status(200);
+    res.json(evaluation);
+  } catch (err) {
+    res.status(400);
+    let msg = "There was an error parsing your circuit.\n";
+    msg += "Make sure that you follow the specified format, and check the testing files for examples.\n";
+    res.send(msg);
+    res.end()
+  }
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
