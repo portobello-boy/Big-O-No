@@ -173,16 +173,17 @@ function getDefaults(component)
 function evaluateCircuit(circuit)
 {
     let evals = [];
+    let evaluation;
     for (component in circuit) {
         if (isComplete(circuit[component])) {
-            let eval = evaluateComponent(circuit, circuit[component]);
-            evals.push(eval);
+            evaluation = evaluateComponent(circuit, circuit[component]);
+            evals.push(evaluation);
         } else {
             let expressions = generateComponentExprs(circuit, circuit[component]);
             let defaults = getDefaults(circuit[component]);
             for (expr of expressions) {
-                let eval = assign.evalExpression(expr, defaults);
-                evals.push(eval);
+                let evaluation = assign.evalExpression(expr, defaults);
+                evals.push(evaluation);
             }
         }
     }
@@ -196,20 +197,7 @@ module.exports = {
     generateCircuitExprs,
     getCompAssignment,
     evaluateComponent,
+    isConnected,
+    isComplete,
     evaluateCircuit
 }
-
-var json = require('./test/testCircuit1.json');
-// console.log(generateCircuitExprs(json));
-// console.log(evaluateComponent(json, json.component1));
-
-// var input = getComponent(json.component1, 'and1');
-// console.log(getSubExpr(json.component1, input));
-// exprs = evaluateCircuit(json);
-// console.log(exprs);
-// console.log(assign.evalExpression(exprs[0]));
-
-// console.log(getCompAssignment(json, json.component1));
-// console.log(evaluateComponent(json, json.component1));
-console.log(evaluateCircuit(json));
-// console.log(isConnected(json.component1));

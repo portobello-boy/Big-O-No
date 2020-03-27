@@ -9,7 +9,7 @@
             {
                 "name": "x2",
                 "type": "static",
-                "value": false
+                "value": true
             },
             {
                 "name": "x3",

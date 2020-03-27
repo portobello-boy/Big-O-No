@@ -1,68 +1,28 @@
 const parser = require('../parse');
+const testUtils = require('../testUtils');
 
-const validExprs = [
-	"x1",
-	"(x1 and x2)",
-	"not x1",
-	"not (x1 and x2)",
-	"(not x1 and x2)", 
-	"(x1 and not x2)",
-	"((x1 and x2) and not x3)",
-	"(x1 AND (x2 OR x3))"
-];
+console.log("List of valid expressions:", testUtils.validExprs);
 
-const validExprsPad = [
-	"x1",
-	"( x1 and x2 )",
-	"not x1",
-	"not ( x1 and x2 )",
-	"( not x1 and x2 )", 
-	"( x1 and not x2 )",
-	"( ( x1 and x2 ) and not x3 )",
-	"( x1 AND ( x2 OR x3 ) )"
-];
-
-const validExprsTrees = [
-	['x1'],
-	['(', ['x1'], 'and', ['x2'], ')'],
-	['not', ['x1']],
-	['not', ['(', ['x1'], 'and', ['x2'], ')']],
-	['(', ['not', ['x1']], 'and', ['x2'], ')'],
-	['(', ['x1'], 'and', ['not', ['x2']], ')'],
-	['(', ['(', ['x1'], 'and', ['x2'], ')'], 'and', ['not', ['x3']], ')'],
-	['(', ['x1'], 'AND', ['(', ['x2'], 'OR', ['x3'], ')'], ')']
-];
-
-const invalidParens = [
-	"(x1",
-	"(x1 and x2))",
-	"(x1 and (x2)",
-	"((x1 and x2)",
-	"(x1 and (x2 and not x3)))"
-];
-
-console.log("List of valid expressions:", validExprs);
-
-for (let i = 0; i < validExprs.length; ++i) {
+for (let i = 0; i < testUtils.validExprs.length; ++i) {
 	test("Test pad function", () => {
-		expect(parser.pad(validExprs[i])).toMatch(validExprsPad[i]);
+		expect(parser.pad(testUtils.validExprs[i])).toMatch(testUtils.validExprsPad[i]);
 	});
 
 	test("Test parse function", () => {
-		expect(parser.parse(validExprs[i])).toStrictEqual(validExprsTrees[i]);
+		expect(parser.parse(testUtils.validExprs[i])).toStrictEqual(testUtils.validExprsTrees[i]);
 	});
 
 	test("Test paren validation", () => {
-		expect(parser.validateParens(validExprs[i])).toBeTruthy();
+		expect(parser.validateParens(testUtils.validExprs[i])).toBeTruthy();
 	});
 }
 
-for (let i = 0; i < invalidParens.length; ++i) {
+for (let i = 0; i < testUtils.invalidParens.length; ++i) {
 	test("Find invalid parens", () => {
-		expect(parser.validateParens(invalidParens[i])).toBeFalsy();
+		expect(parser.validateParens(testUtils.invalidParens[i])).toBeFalsy();
 	});
 
 	test("Parse fails on invalid parens", () => {
-		expect(parser.parse(invalidParens[i])).toMatch("ERROR: Parentheses do not match up");
+		expect(parser.parse(testUtils.invalidParens[i])).toMatch("ERROR: Parentheses do not match up");
 	});
 }
