@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Minimap from 'react-minimap';
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
+import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
 
 class Canvas extends Component {
     constructor(props) {
@@ -300,8 +301,10 @@ class Canvas extends Component {
                     <div class="content">
 		    	<div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
                         <p> AND Gate
+			<Draggable>
                         <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40">
                         </img>
+			</Draggable>
                         </p>
 			</div>
 		    	<div class="gate">
