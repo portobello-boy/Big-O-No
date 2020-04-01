@@ -51,6 +51,7 @@ class Canvas extends Component {
         this.selecting = null;
         this.dragging = null;
         this.connecting = null;
+        this.animFrameID = null;
     }
 
     // Draw the Canvas and Elements on it
@@ -124,7 +125,7 @@ class Canvas extends Component {
         }
 
         // Request redraw to canvas
-        window.requestAnimationFrame(this.draw);
+        this.animFrameID = window.requestAnimationFrame(this.draw);
     }
 
     // Scroll method for recentering with keys/buttons (To be implemented later)
@@ -272,6 +273,10 @@ class Canvas extends Component {
 
         // Make call to draw() method
         this.draw();
+    }
+
+    componentWillUnmount() {
+        window.cancelAnimationFrame(this.animFrameID);
     }
 
     render() {
