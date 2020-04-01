@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import Minimap from 'react-minimap';
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
@@ -38,7 +39,7 @@ class Canvas extends Component {
             scrollAnimation: true,
             zoomAnimation: true
         };
-        this.scrollAnimation = { 
+        this.scrollAnimation = {
             v: 0, // Velocity
             r: 0, // Rate
             animate: false // Animation flag
@@ -64,30 +65,30 @@ class Canvas extends Component {
 
         // Draw dots
         // if (this.zoom > 24) {
-            // Initialize context fill style
-            ctx.fillStyle = "rgba(200,200,200," + Math.min(1, this.zoom / 100) + ")";
-            // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
-            
-            // Draw small dots (boxes) or lines at intervals based on the zoom level
-            for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-                for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-                    ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
-                }
-            }
+        // Initialize context fill style
+        ctx.fillStyle = "rgba(200,200,200," + Math.min(1, this.zoom / 100) + ")";
+        // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
 
-            // Draw lines based on zoom level
-            // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-            //     ctx.beginPath();
-            //     ctx.moveTo(i - this.zoom/24, 0);
-            //     ctx.lineTo(i - this.zoom/24, canvas.height);
-            //     ctx.stroke();
-            // }
-            // for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-            //     ctx.beginPath();
-            //     ctx.moveTo(0, j - this.zoom/24);
-            //     ctx.lineTo(canvas.width, j - this.zoom/24);
-            //     ctx.stroke();
-            // }
+        // Draw small dots (boxes) or lines at intervals based on the zoom level
+        for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+            for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+                ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
+            }
+        }
+
+        // Draw lines based on zoom level
+        // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(i - this.zoom/24, 0);
+        //     ctx.lineTo(i - this.zoom/24, canvas.height);
+        //     ctx.stroke();
+        // }
+        // for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(0, j - this.zoom/24);
+        //     ctx.lineTo(canvas.width, j - this.zoom/24);
+        //     ctx.stroke();
+        // }
         // }
 
         // Define line styles based on zoom level (For Later)
@@ -103,7 +104,7 @@ class Canvas extends Component {
             if (this.scrollAnimation.animate && this.settings.scrollAnimation) { // If animation flags are up
                 this.offset.x -= Math.sin(this.scrollAnimation.r) * this.scrollAnimation.v; // Modify x offset by function of rate and velocity
                 this.offset.y += Math.cos(this.scrollAnimation.r) * this.scrollAnimation.v; // Modify y offset by function of rate and velocity
-                
+
                 this.scrollAnimation.v -= this.scrollAnimation.v / 16; // Reduce velocity by 1/16
                 if (this.scrollAnimation.v <= 0.001) { // If velocity falls below a threshold
                     this.scrollAnimation.animate = false; // Deactivate flag
@@ -167,8 +168,8 @@ class Canvas extends Component {
         // Set the zoomAnimation info (used in draw())
         this.zoomAnimation = Math.min(
             Math.max(
-                this.zoomAnimation - this.zoom / 8 * ((e.deltaX || e.deltaY) > 0 ? .5 : -1), 
-                2), 
+                this.zoomAnimation - this.zoom / 8 * ((e.deltaX || e.deltaY) > 0 ? .5 : -1),
+                2),
             300
         );
 
@@ -243,11 +244,11 @@ class Canvas extends Component {
         e.srcElement.classList.toggle("active");
         var content = e.srcElement.nextElementSibling;
 
-        if (content.style.maxHeight){
+        if (content.style.maxHeight) {
             content.style.maxHeight = null;
         } else {
             content.style.maxHeight = content.scrollHeight + "px";
-        } 
+        }
     }
 
     /* 
@@ -275,64 +276,72 @@ class Canvas extends Component {
 
     render() {
         return (
-	<div>
+            <div>
                 <div class="sidenav">
-                <button type="button" class="collapsible">Inputs</button>
-		    <div class="content">
-			<p>Inputs</p>
-		    </div>
+                    <div>
+                        <button type="button" class="collapsible">Inputs</button>
+                        <div class="content">
+                            <p>Inputs</p>
+                        </div>
 
-                <button type="button" class="collapsible">Gates</button>
+                        <button type="button" class="collapsible">Gates</button>
 
-                    <div class="content">
-		    	<div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
-                        <p> AND Gate
+                        <div class="content">
+                            <div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
+                                <p> AND Gate
                         <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40">
-                        </img>
-                        </p>
-			</div>
-		    	<div class="gate">
-                        <p> OR Gate
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> OR Gate
                         <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40">
-                        </img>
-                        </p>
-			</div>
-		    	<div class="gate">
-                        <p> NOR Gate
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> NOR Gate
                         <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40">
-                        </img>
-                        </p>
-			</div>
-		    	<div class="gate">
-                        <p> XOR Gate
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> XOR Gate
                         <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40">
-                        </img>
-                        </p>
-			</div>
-		    	<div class="gate">
-                        <p> NAND Gate
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> NAND Gate
                         <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40">
-                        </img>
-                        </p>
-			</div>
-		    	<div class="gate">
-                        <p> NOT Gate
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> NOT Gate
                         <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40">
-                        </img>
-                        </p>
-			</div>
-                     </div>
+                                    </img>
+                                </p>
+                            </div>
+                        </div>
 
-                <button type="button" class="collapsible">Outputs</button>
-                    <div class="content">
-                        <p> Outputs </p>
+                        <button type="button" class="collapsible">Outputs</button>
+                        <div class="content">
+                            <p> Outputs </p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <Link to={'./logic'}>
+                            <button type="button" class="sidenav-link">See Logic...</button>
+                        </Link>
                     </div>
                 </div>
                 <div>
                     <Minimap selector=".area">
-                        width={window.innerWidth-5}
-                        height={window.innerHeight-200}
-                        
+                        width={window.innerWidth - 5}
+                        height={window.innerHeight - 200}
+
                         {/*<div className="card">
                             <h1>Name</h1>
                             </div>
@@ -343,12 +352,12 @@ class Canvas extends Component {
                             </div>
                         </div> */}
 
-                        <canvas 
-                        class="area"
+                        <canvas
+                            class="area"
                             ref="background"
                             width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
                             height={window.innerHeight - 7}
-                            style={{border: '1px solid #000000'}}
+                            style={{ border: '1px solid #000000' }}
                         ></canvas>
                     </Minimap>
                 </div>
