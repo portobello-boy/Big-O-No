@@ -4,6 +4,14 @@ import Minimap from 'react-minimap';
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
 
+// Images
+import AND from './images/AND.svg';
+import OR from './images/OR.svg';
+import NOT from './images/NOT.svg';
+import XOR from './images/XOR.svg';
+import NOR from './images/NOR.svg';
+import NAND from './images/NAND.svg';
+
 class Canvas extends Component {
     constructor(props) {
         super(props);
@@ -294,37 +302,43 @@ class Canvas extends Component {
                         <div class="content">
                             <div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
                                 <p> AND Gate
-                        <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40">
+                        {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
+                        <img src={AND} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> OR Gate
-                        <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40">
+                        {/* <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40"> */}
+                        <img src={OR} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> NOR Gate
-                        <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40">
+                        {/* <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40"> */}
+                        <img src={NOR} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> XOR Gate
-                        <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40">
+                        {/* <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40"> */}
+                        <img src={XOR} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> NAND Gate
-                        <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40">
+                        {/* <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40"> */}
+                        <img src={NAND} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> NOT Gate
-                        <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40">
+                        {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
+                        <img src={NOT} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
@@ -344,8 +358,8 @@ class Canvas extends Component {
                 </div>
                 <div>
                     <Minimap selector=".area">
-                        width={window.innerWidth - 5}
-                        height={window.innerHeight - 200}
+                        {/* width={window.innerWidth - 5}
+                        height={window.innerHeight - 200} */}
 
                         {/*<div className="card">
                             <h1>Name</h1>
@@ -360,8 +374,8 @@ class Canvas extends Component {
                         <canvas
                             class="area"
                             ref="background"
-                            width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
-                            height={window.innerHeight - 7}
+                            width={window.innerWidth} // XXX Cleaner way to fit canvas to screen?
+                            height={window.innerHeight}
                             style={{ border: '1px solid #000000' }}
                         ></canvas>
                     </Minimap>

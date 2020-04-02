@@ -1,0 +1,4 @@
+The image files in this project were borrowed from creative commons domain sources. Here are the attributions to the various sources:
+
+Logic Gate icons:
+    Logic gates AND/OR/NOT/XOR/NAND/NOR by Studio Refine from the Noun Project
