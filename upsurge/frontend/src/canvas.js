@@ -293,18 +293,13 @@ class Canvas extends Component {
 
     render() {
         return (
-            <div>
+	<div>
+		{/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-			<button type="button" class="collapsible">Export</button>
-			    <div class="content">
-				<p>Export</p>
-			    </div>
+			<button type="button" class="io">Export</button>
 
-			<button type="button" class="collapsible">Upload</button>
-			    <div class="content">
-				<p>Upload</p>
-			    </div>
+			<button type="button" class="io">Upload</button>
 
                         <button type="button" class="collapsible">Inputs</button>
                         <div class="content">
@@ -364,7 +359,6 @@ class Canvas extends Component {
                             </div>
 			</div>
 
-
                         <button type="button" class="collapsible">Outputs</button>
 				<div class="content">
 				    <p> Outputs </p>
@@ -382,6 +376,14 @@ class Canvas extends Component {
 		    </div>
 		</div>
 
+		{/*Components tab*/}
+		{/*<div>
+                	<div class="comptab">
+				<button type ="button" class="io">Components</button>
+			</div>
+		</div>*/}
+
+		{/*Minimap*/}
                 <div>
                     <Minimap selector=".area">
                         {/* width={window.innerWidth - 5}
