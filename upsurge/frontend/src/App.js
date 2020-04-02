@@ -1,7 +1,10 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom'
+
+// Get CSS
 import './App.css';
 
+// Grab route components
 import Canvas from './canvas';
 import Logic from './logic';
 

@@ -1,16 +1,19 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Minimap from 'react-minimap';
+
+// Get CSS
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
 
-// Images
+// Get Images
 import AND from './images/AND.svg';
 import OR from './images/OR.svg';
 import NOT from './images/NOT.svg';
 import XOR from './images/XOR.svg';
 import NOR from './images/NOR.svg';
 import NAND from './images/NAND.svg';
+import XNOR from './images/XNOR.svg';
 
 class Canvas extends Component {
     constructor(props) {
@@ -303,46 +306,54 @@ class Canvas extends Component {
                             <div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
                                 <p> AND Gate
                         {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
-                        <img src={AND} alt="And" height="25" width="40">
+                                    <img src={AND} alt="And" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> OR Gate
                         {/* <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40"> */}
-                        <img src={OR} alt="And" height="25" width="40">
+                                    <img src={OR} alt="Or" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> NOR Gate
                         {/* <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40"> */}
-                        <img src={NOR} alt="And" height="25" width="40">
+                                    <img src={NOR} alt="Nor" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> XOR Gate
                         {/* <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40"> */}
-                        <img src={XOR} alt="And" height="25" width="40">
+                                    <img src={XOR} alt="Xor" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> NAND Gate
                         {/* <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40"> */}
-                        <img src={NAND} alt="And" height="25" width="40">
+                                    <img src={NAND} alt="Nand" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
                                 <p> NOT Gate
                         {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
-                        <img src={NOT} alt="And" height="25" width="40">
+                                    <img src={NOT} alt="Not" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> XNOR Gate
+                        {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
+                                    <img src={XNOR} alt="Xnor" height="25" width="40">
                                     </img>
                                 </p>
                             </div>
                         </div>
+
 
                         <button type="button" class="collapsible">Outputs</button>
                         <div class="content">

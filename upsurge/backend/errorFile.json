@@ -1,0 +1,50 @@
+[
+    {
+        "id": 1,
+        "message": "Error with padding. Perhaps the input was not interpreted as a string."
+    },
+    {
+        "id": 2,
+        "message": "Error checking connectives between parentheses. Your expression was probably not well-formed, likely due to forgetting to wrap the binary expressions in parentheses, or wrapping a unary operator with them. Consult the README for the grammar of a well-formed formula."
+    },
+    {
+        "id": 3,
+        "message": "Error validating opening and closing parentheses. Check to ensure that you have the same number of opening and closing parentheses in your expression."
+    },
+    {
+        "id": 4,
+        "message": "Error evaluating one side of an expression clause. Check to ensure that your expression is a well-formed formula."
+    },
+    {
+        "id": 5,
+        "message": "Error parsing given boolean expression. Check your expression and ensure it is well-formed."
+    },
+    {
+        "id": 6,
+        "message": "Error grabbing variables from boolean expression. Ensure that your expression is well-formed and has variable names that are distinct from unary and binary operators."
+    },
+    {
+        "id": 7,
+        "message": "Error generating true-false values for given number. Ensure that the number is a positive integer."
+    },
+    {
+        "id": 8,
+        "message": "Error assigning true-false values to set of variables."
+    },
+    {
+        "id": 9,
+        "message": "Error evaluating boolean statement, make sure you entered a valid binary operation (and, or, xor, nand, nor, xnor) or valid unary operation (not)."
+    },
+    {
+        "id": 10,
+        "message": "Error evaluating parse tree, something went wrong!"
+    },
+    {
+        "id": 11,
+        "message": "Error evaluating parse tree, your formula is not well formed! This is likely due to forgetting to wrap the binary expressions in parentheses, or wrapping a unary operator with them. Consult the README to find the grammar for a well-formed forumla."
+    },
+    {
+        "id": 12,
+        "message": "Error evaluating boolean expression, something went wrong!"
+    }
+]

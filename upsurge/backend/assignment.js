@@ -1,5 +1,6 @@
 var parser = require('./parse');
 var operators = require('./utility')
+var error = require('./error');
 
 // Input: string
 // Output: array of strings
@@ -21,8 +22,10 @@ function getVars(s)
 		return Array.from(new Set(temp));
 	} catch (err) {
 		console.log("ERROR: getVars");
-		console.log(err.message);
-		throw new Error("Error grabbing variables from expression " + s);
+		console.log(err);
+		if (err.val)
+			throw err;
+		throw new error.Err(6);
 	}
 }
 
@@ -31,11 +34,8 @@ function getVars(s)
 // Given a number of variables, generate all possible true-false assignments
 function genVals(n)
 {
-	if (n <= 0) {
-		throw new Error("ERROR: " + n + " <= 0");
-	} else if (!Number.isInteger(n)) {
-		throw new Error("ERROR: " + n + " is not an integer");
-	}
+	if (n <= 0 || !Number.isInteger(n))
+		throw new error.Err(7);
 
 	try {
 		vals = [];
@@ -51,8 +51,10 @@ function genVals(n)
 		return vals;
 	} catch (err) {
 		console.log("ERROR: genVals");
-		console.log(err.message);
-		throw new Error("Error generating values for size: " + n);
+		console.log(err);
+		if (err.val)
+			throw err;
+		throw new error.Err(7);
 	}
 }
 
@@ -74,8 +76,10 @@ function assign(vars, assigns, defaults = {})
 		return assignments;
 	} catch (err) {
 		console.log("ERROR: assign");
-		console.log(err.message);
-		throw new Error("Error assignment to: " + JSON.stringify(vars) + " " + JSON.stringify(assigns));
+		console.log(err);
+		if (err.val)
+			throw err;
+		throw new error.Err(8);
 	}
 }
 
@@ -86,14 +90,19 @@ function evalStatement(arr)
 {
 	// console.log("Evaluating:", arr);
 	try {
-		if (operators.notSet.has(arr[0])) return Boolean(!(arr[1][0]));
-		if (operators.andSet.has(arr[0])) return Boolean(arr[1][0] & arr[2][0]);
-		if (operators.xorSet.has(arr[0])) return Boolean(arr[1][0] ^ arr[2][0]);
-		if (operators.orSet.has(arr[0]))  return Boolean(arr[1][0] | arr[2][0]);
+		if (operators.notSet.has(arr[0]))  		return Boolean(!(arr[1][0]));
+		else if (operators.andSet.has(arr[0]))  return Boolean(arr[1][0] & arr[2][0]);
+		else if (operators.xorSet.has(arr[0]))  return Boolean(arr[1][0] ^ arr[2][0]);
+		else if (operators.orSet.has(arr[0]))   return Boolean(arr[1][0] | arr[2][0]);
+		else if (operators.nandSet.has(arr[0])) return !Boolean(arr[1][0] & arr[2][0]);
+		else if (operators.norSet.has(arr[0]))  return !Boolean(arr[1][0] | arr[2][0]);
+		else if (operators.xnorSet.has(arr[0])) return !Boolean(arr[1][0] ^ arr[2][0]);
 	} catch (err) {
 		console.log("ERROR: evalStatement");
-		console.log(err.message, arr);
-		throw new Error("Error evaluating statement: " + JSON.stringify(arr));
+		console.log(err);
+		if (err.val)
+			throw err;
+		throw new error.Err(9);
 	}
 }
 
@@ -112,12 +121,15 @@ function evalTree(tree, assignment)
 			return [evalStatement([tree[0], side1])]
 		} else if (tree.length == 1) { // Single variable
 			return [assignment[tree[0]]];
+		} else {
+			throw new error.Err(11);
 		}
 	} catch (err) {
 		console.log("ERROR: evalTree");
-		console.log(err.message)
-		console.log(tree, assignment);
-		throw new Error("Error evaluating tree: " + JSON.stringify(tree) + " against assignment " + JSON.stringify(assignment));
+		console.log(err);
+		if (err.val)
+			throw err;
+		throw new error.Err(10);
 	}
 }
 
@@ -153,8 +165,10 @@ function evalExpression(exp, defaults = {})
 		return table;
 	} catch (err) {
 		console.log("ERROR: evalExpression");
-		console.log(err.message);
-		throw err;
+		console.log(err);
+		if (err.val)
+			throw err;
+		throw new error.Err(12);
 	}
 }
 
