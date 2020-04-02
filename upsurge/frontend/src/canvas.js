@@ -279,15 +279,9 @@ class Canvas extends Component {
 	<div>
                 <div class="sidenav">
 
-                <button type="button" class="collapsible">Export</button>
-		    <div class="content">
-			<p>Export</p>
-		    </div>
+                <button type="button" class="io">Export</button>
 
-                <button type="button" class="collapsible">Upload</button>
-		    <div class="content">
-			<p>Upload</p>
-		    </div>
+                <button type="button" class="io">Upload</button>
 
                 <button type="button" class="collapsible">Inputs</button>
 		    <div class="content">

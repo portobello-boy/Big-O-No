@@ -10,6 +10,19 @@
     padding-top: 20px;
 }
 
+.io {
+    content: '\02795';
+    background-color: #222;
+    color: #eee;
+    cursor: pointer;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
 .collapsible {
     content: '\02795';
     background-color: #222;
