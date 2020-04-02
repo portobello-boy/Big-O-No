@@ -283,6 +283,12 @@ class Canvas extends Component {
             collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
         }
 
+        const comptab = document.getElementsByClassName("comptab");
+        for (let i = 0; i < comptab.length; ++i) {
+            console.log(i);
+            comptab[i].addEventListener('click', (i) => this.openDrawer(i));
+        }
+
         // Make call to draw() method
         this.draw();
     }
@@ -377,11 +383,12 @@ class Canvas extends Component {
 		</div>
 
 		{/*Components tab*/}
-		{/*<div>
                 	<div class="comptab">
-				<button type ="button" class="io">Components</button>
+				<button type ="button" class="collapsible">Components</button>
+				<div class="content">
+				    <p>Components</p>
+				</div>
 			</div>
-		</div>*/}
 
 		{/*Minimap*/}
                 <div>
