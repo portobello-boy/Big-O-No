@@ -283,12 +283,6 @@ class Canvas extends Component {
             collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
         }
 
-        const comptab = document.getElementsByClassName("comptab");
-        for (let i = 0; i < comptab.length; ++i) {
-            console.log(i);
-            comptab[i].addEventListener('click', (i) => this.openDrawer(i));
-        }
-
         // Make call to draw() method
         this.draw();
     }
@@ -361,7 +355,8 @@ class Canvas extends Component {
                         {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
                                     <img src={XNOR} alt="Xnor" height="25" width="40">
                                     </img>
-                                </p>
+             
+                   </p>
                             </div>
 			</div>
 
@@ -385,9 +380,9 @@ class Canvas extends Component {
 		{/*Components tab*/}
                 	<div class="comptab">
 				<button type ="button" class="collapsible">Components</button>
-				<div class="content">
-				    <p>Components</p>
-				</div>
+					<div class="content">
+					    <p>Components</p>
+					</div>
 			</div>
 
 		{/*Minimap*/}

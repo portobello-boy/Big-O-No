@@ -63,7 +63,7 @@
     overflow-x: hidden; /* Disable horizontal scroll */
 }
 
-.collapsible:after, .comptab:after {
+.collapsible:after {
     content: '\02795'; /* Unicode character for "plus" sign (+) */
     font-size: 13px;
     color: #eee;
@@ -71,7 +71,7 @@
     margin-left: 5px;
 }
 
-.active, .collapsible:hover, .comptab:hover {
+.active, .collapsible:hover {
     background-color: #333;
 }
 
