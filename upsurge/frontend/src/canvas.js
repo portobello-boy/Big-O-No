@@ -277,6 +277,7 @@ class Canvas extends Component {
     render() {
         return (
 	<div>
+		{/*Menus sidebar*/}
                 <div class="sidenav">
 
                 <button type="button" class="io">Export</button>
@@ -344,6 +345,15 @@ class Canvas extends Component {
 		    </div>
 
                 </div>
+
+		{/*Components tab*/}
+		<div>
+                	<div class="comptab">
+				<button type ="button" class="io">Components</button>
+			</div>
+		</div>
+
+		{/*Minimap*/}
                 <div>
                     <Minimap selector=".area">
                         width={window.innerWidth-5}
