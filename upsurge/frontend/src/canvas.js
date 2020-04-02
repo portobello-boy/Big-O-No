@@ -1,11 +1,11 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Minimap from 'react-minimap';
+//import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
 
 // Get CSS
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
-import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
 
 // Get Images
 import AND from './images/AND.svg';
@@ -296,13 +296,22 @@ class Canvas extends Component {
             <div>
                 <div class="sidenav">
                     <div>
+			<button type="button" class="collapsible">Export</button>
+			    <div class="content">
+				<p>Export</p>
+			    </div>
+
+			<button type="button" class="collapsible">Upload</button>
+			    <div class="content">
+				<p>Upload</p>
+			    </div>
+
                         <button type="button" class="collapsible">Inputs</button>
                         <div class="content">
                             <p>Inputs</p>
                         </div>
 
                         <button type="button" class="collapsible">Gates</button>
-
                         <div class="content">
                             <div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
                                 <p> AND Gate
@@ -353,37 +362,26 @@ class Canvas extends Component {
                                     </img>
                                 </p>
                             </div>
-                        </div>
+			</div>
 
 
                         <button type="button" class="collapsible">Outputs</button>
-                        <div class="content">
-                            <p> Outputs </p>
-                        </div>
-                    </div>
+				<div class="content">
+				    <p> Outputs </p>
+				</div>
+			<button type="button" class="collapsible">Miscellaneous</button>
+			    <div class="content">
+				<p>Miscellaneous</p>
+			    </div>
+		    </div>
 
                     <div>
                         <Link to={'./logic'}>
                             <button type="button" class="sidenav-link">See Logic...</button>
                         </Link>
-
-                <button type="button" class="collapsible">Export</button>
-		    <div class="content">
-			<p>Export</p>
 		    </div>
+		</div>
 
-                <button type="button" class="collapsible">Upload</button>
-		    <div class="content">
-			<p>Upload</p>
-		    </div>
-                    </div>
-
-                <button type="button" class="collapsible">Miscellaneous</button>
-		    <div class="content">
-			<p>Miscellaneous</p>
-		    </div>
-
-                </div>
                 <div>
                     <Minimap selector=".area">
                         {/* width={window.innerWidth - 5}
