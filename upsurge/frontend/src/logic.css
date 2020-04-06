@@ -1,0 +1,29 @@
+.test {
+    height: 100px; /* Full-height: remove this if you want "auto" height */
+    width: 200px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 0;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+
+    flex-direction: column;
+    justify-content: space-between;
+    display: flex;
+}
+
+.sidenav-link {
+    align-self: flex-end;
+    content: '\02795';
+    background-color: #222;
+    color: #eee;
+    cursor: pointer;
+    padding: 12px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 15px;
+}
+
