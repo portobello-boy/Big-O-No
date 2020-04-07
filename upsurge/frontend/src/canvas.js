@@ -20,7 +20,37 @@ class Canvas extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // Do we even need state variables yet?
+            // circuit: {}
+            circuit: {
+                "component": {
+                    "inputs": [
+                        {
+                            "name": "x",
+                            "type": "static",
+                            "value": true
+                        },
+                        {
+                            "name": "y",
+                            "type": "placeholder"
+                        }
+                    ], 
+                    "gates": [
+                        {
+                            "name": "xnor",
+                            "type": "xnor",
+                            "inputs": ["x", "y"]
+                        }
+            
+                    ],
+                    "outputs": [
+                        {
+                            "name": "o1",
+                            "type": "static",
+                            "inputs": ["xnor"]
+                        }
+                    ]
+                }
+            }
         };
 
         // Bind functions to this
@@ -279,7 +309,6 @@ class Canvas extends Component {
 
         const collapsibles = document.getElementsByClassName("collapsible");
         for (let i = 0; i < collapsibles.length; ++i) {
-            console.log(i);
             collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
         }
 
@@ -288,18 +317,22 @@ class Canvas extends Component {
     }
 
     componentWillUnmount() {
+        // Cancel the animation loop for canvas
         window.cancelAnimationFrame(this.animFrameID);
+
+        // Pass the circuit up to parent
+        this.props.getCircuit(this.state.circuit);
     }
 
     render() {
         return (
-	<div>
-		{/*Menus sidebar*/}
+            <div>
+                {/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-			<button type="button" class="io">Export</button>
+                        <button type="button" class="io">Export</button>
 
-			<button type="button" class="io">Upload</button>
+                        <button type="button" class="io">Upload</button>
 
                         <button type="button" class="collapsible">Inputs</button>
                         <div class="content">
@@ -355,37 +388,42 @@ class Canvas extends Component {
                         {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
                                     <img src={XNOR} alt="Xnor" height="25" width="40">
                                     </img>
-             
-                   </p>
+
+                                </p>
                             </div>
-			</div>
+                        </div>
 
                         <button type="button" class="collapsible">Outputs</button>
-				<div class="content">
-				    <p> Outputs </p>
-				</div>
-			<button type="button" class="collapsible">Miscellaneous</button>
-			    <div class="content">
-				<p>Miscellaneous</p>
-			    </div>
-		    </div>
+                        <div class="content">
+                            <p> Outputs </p>
+                        </div>
+                        <button type="button" class="collapsible">Miscellaneous</button>
+                        <div class="content">
+                            <p>Miscellaneous</p>
+                        </div>
+                    </div>
 
                     <div>
-                        <Link to={'./logic'}>
+                        <Link to={{
+                            pathname: './logic',
+                            state: {
+                                circuit: this.state.circuit
+                            }
+                        }}>
                             <button type="button" class="sidenav-link">See Logic...</button>
                         </Link>
-		    </div>
-		</div>
+                    </div>
+                </div>
 
-		{/*Components tab*/}
-                	<div class="comptab">
-				<button type ="button" class="collapsible">Components</button>
-					<div class="content">
-					    <p>Components</p>
-					</div>
-			</div>
+                {/*Components tab*/}
+                <div class="comptab">
+                    <button type="button" class="collapsible">Components</button>
+                    <div class="content">
+                        <p>Components</p>
+                    </div>
+                </div>
 
-		{/*Minimap*/}
+                {/*Minimap*/}
                 <div>
                     <Minimap selector=".area">
                         {/* width={window.innerWidth - 5}

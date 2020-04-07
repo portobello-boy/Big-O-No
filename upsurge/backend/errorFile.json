@@ -46,5 +46,9 @@
     {
         "id": 12,
         "message": "Error evaluating boolean expression, something went wrong!"
+    },
+    {
+        "id": 13,
+        "message": "Error getting subcomponent for a circuit. "
     }
 ]

@@ -56,7 +56,6 @@ app.post('/exp', function(req, res) {
 // POST endpoint for circuitry
 app.post('/circuit', function(req, res) {
   const body = req.body;
-  
   try {
     const evaluation = circuit.evaluateCircuit(body);
     res.set('Content-Type', 'text/json');
