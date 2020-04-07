@@ -57,7 +57,7 @@ class Canvas extends Component {
     // Draw the Canvas and Elements on it
     draw() {
         const canvas = this.refs.background // Grab the actual canvas element by reference
-        const ctx = canvas.getContext("2d") // Create drawing object (context)
+	const ctx = canvas.getContext("2d")  // Create drawing object (context)
 
         // Initialize context data
         ctx.imageSmoothingEnabled = true;

@@ -1,29 +1,21 @@
-.test {
-    height: 100px; /* Full-height: remove this if you want "auto" height */
-    width: 200px; /* Set the width of the sidebar */
-    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
-    z-index: 1; /* Stay on top */
-    top: 0; /* Stay at the top */
-    left: 0;
-    background-color: #111; /* Black */
-    overflow-x: hidden; /* Disable horizontal scroll */
-
-    flex-direction: column;
-    justify-content: space-between;
-    display: flex;
+div.fixed {
+height: 50px;
+width: 100px;
+position: fixed;
+z-index: 1;
+bottom: 10px;
+left: 0;
+border: 3px solid #A9A9A9;
 }
 
-.sidenav-link {
-    align-self: flex-end;
-    content: '\02795';
-    background-color: #222;
-    color: #eee;
-    cursor: pointer;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    text-align: left;
-    outline: none;
-    font-size: 15px;
+textarea.fixed{
+position: fixed;
+left: 50px;
+right: 1000px;
+top: 200px;
+width: 50%;
+white-space: pre;
+max-width: 30%;
+max-height: 40%;
+border: 1px solid #AAAAAA;
 }
-

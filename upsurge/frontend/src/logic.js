@@ -5,17 +5,18 @@ class Logic extends Component {
     render() {
         return (
 		<div>
-		<h1>Goodbye</h1>
+		<h1>Logic Page</h1>
 		
-		<Link to ={'./'}>
-			<button type="button">Testing</button>
-		</Link>
 		<form>
-			<label> Truth Table: 
-				<input type ='text' name="name" />
-			</label>
-			<input type="submit" value="Submit" />
+			<label> Truth Table:</label>
+			<textarea class="static" readonly="readonly"> Here is some text</textarea>
 		</form>
+	
+		<div class ="fixed">
+		<Link to ={'./'}>
+			<button1 type="button">Circuit Tester</button1>
+		</Link>
+		</div>
 		</div>
 
 
