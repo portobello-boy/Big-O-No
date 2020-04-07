@@ -119,6 +119,10 @@ class Canvas extends Component {
             }
         }
 
+	ctx.fillStyle = "rgba(0,0,0,10)";
+	ctx.fillRect((this.mouse.grid.x+this.offset.x)*this.zoom, (-this.mouse.grid.y-this.offset.y)*this.zoom, (1+this.offset.x)*this.zoom, (1-this.offset.y)*this.zoom);
+	    console.log(this.zoom);
+
         // Draw lines based on zoom level
         // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
         //     ctx.beginPath();
@@ -228,6 +232,7 @@ class Canvas extends Component {
         this.mouse.screen.y = e.y;
         this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+	    console.log(this.mouse.grid.x, this.mouse.grid.y);
 
         // XXX For whatever reason, without clicking, the event.which default value is 1,
         //     instead of 0. Right now, dragging can only be done by holding ctrl. So, this
@@ -294,6 +299,22 @@ class Canvas extends Component {
         }
     }
 
+    dragStart(e) {
+	    console.log("dragging");
+	    console.log(e.clientX);
+    }
+
+    dragEnd(e) {
+        this.mouse.screen.x = e.x;
+        this.mouse.screen.y = e.y;
+        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+	    console.log("drag ended");
+	    console.log(e.clientX, e.clientY);
+	    console.log(this.mouse.screen.x, this.mouse.screen.y);
+	    console.log(this.mouse.grid.x, this.mouse.grid.y);
+    }
+
     /* 
     **  Mount this Component
     **  Initialize listeners and call draw()
@@ -311,6 +332,14 @@ class Canvas extends Component {
         for (let i = 0; i < collapsibles.length; ++i) {
             collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
         }
+
+	const gates = document.getElementsByClassName("gate");
+	for (let i = 0; i < gates.length; ++i) {
+		console.log("adding event listener");
+		gates[i].addEventListener('dragstart', (i) => this.dragStart(i));
+		//gates[i].addEventListener('drag', (i) => this.dragHandler(i));
+		gates[i].addEventListener('dragend', (i) => this.dragEnd(i));
+	}
 
         // Make call to draw() method
         this.draw();
@@ -341,7 +370,7 @@ class Canvas extends Component {
 
                         <button type="button" class="collapsible">Gates</button>
                         <div class="content">
-                            <div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
+                            <div class="gate">
                                 <p> AND Gate
                         {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
                                     <img src={AND} alt="And" height="25" width="40">
