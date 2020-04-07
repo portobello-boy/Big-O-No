@@ -36,14 +36,14 @@ class Canvas extends Component {
                             "name": "y",
                             "type": "placeholder"
                         }
-                    ], 
+                    ],
                     "gates": [
                         {
                             "name": "xnor",
                             "type": "xnor",
                             "inputs": ["x", "y"]
                         }
-            
+
                     ],
                     "outputs": [
                         {
@@ -198,7 +198,7 @@ class Canvas extends Component {
     //     );
     // }
 
-    /* 
+    /*
     **  Event Listeners
     **  Functions attached to different events and interactions with the canvas
     */
@@ -297,7 +297,7 @@ class Canvas extends Component {
         }
     }
 
-    /* 
+    /*
     **  Mount this Component
     **  Initialize listeners and call draw()
     */
@@ -333,7 +333,7 @@ class Canvas extends Component {
                 {/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-						<button onClick={io.download} type="button">Export</button>
+						<button onClick={io.download} type="button" class="io">Export</button>
 
                         <button type="button" class="io">Upload</button>
 
