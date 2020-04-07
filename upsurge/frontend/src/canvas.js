@@ -123,8 +123,8 @@ class Canvas extends Component {
 	ctx.fillRect(
         (this.mouse.grid.x-this.offset.x)*this.zoom, 
         (-this.mouse.grid.y+this.offset.y)*this.zoom,
-        (1+1/128)*this.zoom,
-        (1-1/128)*this.zoom
+        (1*this.zoom),
+        (1*this.zoom)
     );
     // console.log(this.zoom);
     // console.log(this.mouse.grid, this.offset);
