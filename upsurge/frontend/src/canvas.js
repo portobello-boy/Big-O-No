@@ -17,7 +17,7 @@ import NOR from './images/NOR.svg';
 import NAND from './images/NAND.svg';
 import XNOR from './images/XNOR.svg';
 
-import './io.js'
+const io = require('./io')
 
 class Canvas extends Component {
     constructor(props) {
@@ -333,7 +333,7 @@ class Canvas extends Component {
                 {/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-						<button type="button" class="io" onclick="download()">Export</button>
+						<button onClick={io.download}>Export</button>
 
                         <button type="button" class="io">Upload</button>
 
