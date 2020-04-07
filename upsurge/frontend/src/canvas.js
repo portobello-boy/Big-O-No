@@ -333,7 +333,7 @@ class Canvas extends Component {
                 {/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-						<button onClick={io.download}>Export</button>
+						<button onClick={io.download} type="button">Export</button>
 
                         <button type="button" class="io">Upload</button>
 
