@@ -1,4 +1,5 @@
-var operators = require('./utility')
+let operators = require('./utility')
+let error = require('./error')
 
 // Input: string
 // Output: string
@@ -30,7 +31,9 @@ function pad(s)
 	} catch (err) {
 		console.log("ERROR: pad");
 		console.log(err.message);
-		throw err;
+		if (err.val)
+			throw err;
+		throw new error.Err(1);
 	}
 }
 
@@ -39,6 +42,7 @@ function pad(s)
 // Return a sub-expression between parentheses with exactly one binary operation
 function checkParens(s)
 {
+	console.log(s);
 	try {
 		stack = [];
 		length = 0;
@@ -57,7 +61,9 @@ function checkParens(s)
 		console.log("ERROR: checkParens");
 		console.log("Given:", s);
 		console.log(err.message);
-		throw err;
+		if (err.val)
+			throw err;
+		throw new error.Err(2);
 	}
 }
 
@@ -79,7 +85,9 @@ function validateParens(s)
 	} catch (err) {
 		console.log("ERROR: validateParens");
 		console.log(err.message);
-		throw err;
+		if (err.val)
+			throw err;
+		throw new error.Err(3);
 	}
 }
 
@@ -88,14 +96,14 @@ function validateParens(s)
 // Convert a string into a binary parse tree
 function parse(s)
 {
+	console.log(s);
 	try {
 		if (s.length == 0) // Ensure that there is something to be parsed
 			return [];
 
 		if (typeof(s) == "string") { // If a string is passed in
 			if (!validateParens(s)) { // Validate parentheses
-				console.log("ERROR: Parentheses do not match up");
-				return "ERROR: Parentheses do not match up";
+				throw new error.Err(3);
 			}
 			exp = pad(s); // Pad string
 			exp = exp.split(" "); // Tokenize on spaces, exp is array of strings
@@ -104,8 +112,8 @@ function parse(s)
 		}
 
 		// Initialize variables for either side of an expression
-		var c1 = [];
-		var c2 = [];
+		let c1 = [];
+		let c2 = [];
 
 		if (operators.unOps.has(exp[0])) { // If we see a unary operator
 			unary = exp[0];
@@ -114,26 +122,28 @@ function parse(s)
 		}
 
 		if (exp[0] == '(' && exp[exp.length-1] == ')') { // If the expression is wrapped in parentheses
-			var arr = checkParens(exp); // Separate the sides of a binary operation
-			if (typeof(arr) == "string") {
-				return "ERROR: Non-matching parentheses, or more than one connective between parentheses";
-			} else {
-				c1 = parse(arr[0]); // Parse left
-				c2 = parse(arr[2]); // Parse right
-				if (c1.length && c2.length) {
-					r = ['(', c1, arr[1], c2, ')'];
-					return r;
-				}
-				else {
-					return "ERROR: Side returned empty";
-				}
+			let arr = checkParens(exp); // Separate the sides of a binary operation
+			// if (typeof(arr) == "string") {
+			// 	return "ERROR: Non-matching parentheses, or more than one connective between parentheses";
+			// } else {
+			c1 = parse(arr[0]); // Parse left
+			c2 = parse(arr[2]); // Parse right
+			if (c1.length && c2.length) {
+				r = ['(', c1, arr[1], c2, ')'];
+				return r;
 			}
+			else {
+				throw new error.Err(4);
+			}
+			// }
 		} else
 			return exp; // Return variable
 	} catch (err) {
 		console.log("ERROR: parse");
 		console.log(err.message);
-		throw err;
+		if (err.val)
+			throw err;
+		throw new error.Err(5);
 	}
 }
 

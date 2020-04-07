@@ -1,29 +1,35 @@
 var parser = require('./parse');
 var assign = require('./assignment');
 var operators = require('./utility');
+var error = require('./error')
 
 // Input: component subcircuit, name of element in component
 // Return: JSON object
 // Given a string name, return the actual JSON body that name refers to
 function getSubComp(component, name)
 {
-    let obj = {};
-    if (component.inputs.some((input, index) => {
-        if (input.name == name) {
-            obj = component.inputs[index];
-            return true;
-        }
-    }))
-        return obj;
-    else if (component.gates.some((gate, index) => {
-        if (gate.name == name) {
-            obj = component.gates[index];
-            return true;
-        }
-    }))
-        return obj;
-
-    return obj;
+    try {
+        let obj = {};
+        if (component.inputs.some((input, index) => {
+            if (input.name == name) {
+                obj = component.inputs[index];
+                return true;
+            }
+        }))
+            return obj;
+        else if (component.gates.some((gate, index) => {
+            if (gate.name == name) {
+                obj = component.gates[index];
+                return true;
+            }
+        }))
+        return obj; 
+    } catch (err) {
+        console.log("ERROR: getSubComp");
+        if (err.val)
+            throw err;
+        throw new error.Err(13);
+    }
 }
 
 // Input: circuit, component subcircuit, stage of analysis in component
