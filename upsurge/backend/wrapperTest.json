@@ -13,8 +13,8 @@
         ], 
         "gates": [
             {
-                "name": "and",
-                "type": "and",
+                "name": "xnor",
+                "type": "xnor",
                 "inputs": ["x", "y"]
             }
 
@@ -23,7 +23,7 @@
             {
                 "name": "o1",
                 "type": "static",
-                "inputs": ["and"]
+                "inputs": ["xnor"]
             }
         ]
     }
