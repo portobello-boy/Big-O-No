@@ -1,12 +1,12 @@
 import 'file-saver';
 
-download(){
+function download(){
 	var fileSaver =  require('file-saver');
 	var blob = new Blob("big brain file downloader");
 	fileSaver.saveAs(blob,"test.txt");
 }
 
-upload(){
+function upload(){
 	//nothing so far
 }
 
