@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Minimap from 'react-minimap';
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
+import './io.js'
 import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
 
 class Canvas extends Component {
@@ -280,7 +281,7 @@ class Canvas extends Component {
 		{/*Menus sidebar*/}
                 <div class="sidenav">
 
-                <button type="button" class="io">Export</button>
+                <button type="button" class="io" onClick={download}>Export</button>
 
                 <button type="button" class="io">Upload</button>
 
@@ -358,7 +359,7 @@ class Canvas extends Component {
                     <Minimap selector=".area">
                         width={window.innerWidth-5}
                         height={window.innerHeight-200}
-                        
+
                         {/*<div className="card">
                             <h1>Name</h1>
                             </div>
