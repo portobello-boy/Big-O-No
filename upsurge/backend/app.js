@@ -11,6 +11,8 @@ var app = express();
 
 var evaluator = require('./assignment');
 var circuit = require('./circuit');
+var error = require('./error');
+var errorList = require('./errorFile.json');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -38,10 +40,14 @@ app.post('/exp', function(req, res) {
     res.json(table);
   } catch (err) {
     console.log(err);
-    console.log(err.message);
+    console.log(errorList[err.val].message);
     res.status(400);
-    let msg = "There was an error parsing your boolean expression.\n";
-    msg += "Make sure that your expressions are well formed, and that each connective is wrapped in parantheses with exactly two expressions on both sides.\n";
+    let msg;
+    if (err.val)
+      msg = errorList[err.val-1];
+    else
+      msg = "There was an error parsing your boolean expression.\n";
+    // msg += "Make sure that your expressions are well formed, and that each connective is wrapped in parantheses with exactly two expressions on both sides.\n";
     res.send(msg);
     res.end()
   }
@@ -50,7 +56,6 @@ app.post('/exp', function(req, res) {
 // POST endpoint for circuitry
 app.post('/circuit', function(req, res) {
   const body = req.body;
-  
   try {
     const evaluation = circuit.evaluateCircuit(body);
     res.set('Content-Type', 'text/json');

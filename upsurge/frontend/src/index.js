@@ -1,22 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 
 import './index.css';
 import * as serviceWorker from './serviceWorker';
 
 // Routes
 import App from './App';
-import Canvas from './canvas';
-import Logic from './logic';
-
 
 ReactDOM.render(
     <BrowserRouter>
-        <Route path="/" component={Canvas}/>
-        {/* <Route path="/canvas" component={Canvas}/> */}
+        <App/>
     </BrowserRouter>,
-    // <App />, 
     document.getElementById('root')
 );
 

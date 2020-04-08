@@ -1,4 +1,5 @@
 const parser = require('../parse');
+const error = require('../error');
 const testUtils = require('./testUtils');
 
 console.log("List of valid expressions:", testUtils.validExprs);
@@ -23,6 +24,6 @@ for (let i = 0; i < testUtils.invalidParens.length; ++i) {
 	});
 
 	test("Parse fails on invalid parens", () => {
-		expect(parser.parse(testUtils.invalidParens[i])).toMatch("ERROR: Parentheses do not match up");
+		expect(() => {parser.parse(testUtils.invalidParens[i])}).toThrow(error.Err);
 	});
 }
