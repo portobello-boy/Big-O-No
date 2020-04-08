@@ -33,14 +33,14 @@ class Canvas extends Component {
                             "name": "y",
                             "type": "placeholder"
                         }
-                    ], 
+                    ],
                     "gates": [
                         {
                             "name": "xnor",
                             "type": "xnor",
                             "inputs": ["x", "y"]
                         }
-            
+
                     ],
                     "outputs": [
                         {
@@ -62,7 +62,7 @@ class Canvas extends Component {
         this.openDrawer = this.openDrawer.bind(this);
 
         // Define variables
-        this.zoom = 100;
+        this.zoom = 50;
         this.offset = {
             x: 0,
             y: 0
@@ -94,6 +94,46 @@ class Canvas extends Component {
         this.dragging = null;
         this.connecting = null;
         this.animFrameID = null;
+
+        // List of Items on Canvas
+        this.items = [
+            {
+                type: "and",
+                location: {
+                    corner: {
+                        x: 0,
+                        y: 0
+                    },
+                    width: 2
+                },
+                inputs: {
+                    num: 2,
+                    map: []
+                }
+            },
+            {
+                type: "or",
+                location: {
+                    corner: {
+                        x: 10,
+                        y: 2
+                    },
+                    width: 2
+                },
+                inputs: {
+                    num: 2,
+                    map: []
+                }
+            }
+        ];
+    }
+
+    gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
+        return { 
+            x: (x - this.offset.x) * this.zoom, 
+            y: (y + this.offset.y) * this.zoom
+        }
+        
     }
 
     // Draw the Canvas and Elements on it
@@ -118,6 +158,105 @@ class Canvas extends Component {
                 ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
             }
         }
+
+        ctx.strokeStyle = "rgba(50,50,50,100)";
+        ctx.strokeRect(
+            (this.mouse.grid.x - this.offset.x) * this.zoom,
+            (-this.mouse.grid.y + this.offset.y) * this.zoom,
+            (1 * this.zoom),
+            (1 * this.zoom)
+        );
+
+        // Iterate through all elements in the "items" list
+        for (let i = 0; i < this.items.length; ++i) {
+            // Get screen location for item
+            let comp = this.items[i];
+            let location = this.gridToPixel(comp.location.corner.x, comp.location.corner.y);
+
+            // Initialize drawing styles
+            ctx.strokeStyle = "rgba(50,50,50,100)";
+            ctx.lineWidth = this.zoom/10;
+            ctx.fillStyle = "rgba(150,150,150,255)";
+
+            // Draw and fill bounding box
+            ctx.fillRect(
+                location.x + this.zoom/2,
+                location.y + this.zoom/2,
+                (comp.location.width * this.zoom),
+                (comp.inputs.num * this.zoom)
+            );
+            ctx.strokeRect(
+                location.x + this.zoom/2,
+                location.y + this.zoom/2,
+                (comp.location.width * this.zoom),
+                (comp.inputs.num * this.zoom)
+            );
+
+            // Draw output node
+            ctx.beginPath();
+            ctx.moveTo(
+                location.x + this.zoom/2 + (comp.location.width) * this.zoom,
+                location.y + this.zoom/2 + (1/2) * this.zoom
+            );
+            ctx.lineTo(
+                location.x + this.zoom/2 + (comp.location.width) * this.zoom + this.zoom/2,
+                location.y + this.zoom/2 + (1/2) * this.zoom
+            );
+            ctx.stroke();
+
+            // Draw output node part 2
+            ctx.lineWidth = this.zoom/20;
+            ctx.fillStyle = "rgba(150,150,150,255)";
+            ctx.beginPath();
+            ctx.arc(
+                location.x + this.zoom/2 + (comp.location.width) * this.zoom + this.zoom/2,
+                location.y + this.zoom/2 + (1/2) * this.zoom,
+                this.zoom/10,
+                0,
+                2*Math.PI
+            );
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw input nodes
+            for (let j = 0; j < comp.inputs.num; ++j) {
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(50,50,50,100)";
+                ctx.lineWidth = this.zoom/10;
+                ctx.fillStyle = "rgba(150,150,150,255)";
+                ctx.moveTo(
+                    location.x + this.zoom/2,
+                    location.y + (this.zoom * (j+1))
+                );
+                ctx.lineTo(
+                    location.x,
+                    location.y + (this.zoom * (j+1))
+                );
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.fillStyle = "rgba(150,150,150,255)";
+                ctx.lineWidth = this.zoom/20;
+                ctx.arc(
+                    location.x,
+                    location.y + (this.zoom * (j+1)),
+                    this.zoom/10,
+                    0,
+                    2*Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
+            }
+
+            // Draw label of node
+            ctx.fillStyle = "rgba(0,0,0,255)";
+            ctx.lineWidth = 5;
+            ctx.font = "900 " + this.zoom/3 + "px Arial";
+            ctx.fillText(this.items[i].type, location.x + this.zoom, location.y + this.zoom);
+        }
+        
+        // console.log(this.zoom);
+        // console.log(this.mouse.grid, this.offset);
 
         // Draw lines based on zoom level
         // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
@@ -205,8 +344,8 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
         // Set the zoomAnimation info (used in draw())
         this.zoomAnimation = Math.min(
@@ -226,8 +365,9 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        console.log(this.mouse.grid.x, this.mouse.grid.y);
 
         // XXX For whatever reason, without clicking, the event.which default value is 1,
         //     instead of 0. Right now, dragging can only be done by holding ctrl. So, this
@@ -251,8 +391,8 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
         if (e.which === 1) { // Left-Click
             if (e.ctrlKey) {
@@ -273,8 +413,8 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
         // XXX Like mouseDown, this function doesn't actually do anything after mouseMove due to the
         //     defauly event.which value being 1, not 0. Will adress this later.
@@ -294,6 +434,22 @@ class Canvas extends Component {
         }
     }
 
+    dragStart(e) {
+        console.log("dragging");
+        console.log(e.clientX);
+    }
+
+    dragEnd(e) {
+        this.mouse.screen.x = e.x;
+        this.mouse.screen.y = e.y;
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        console.log("drag ended");
+        console.log(e.clientX, e.clientY);
+        console.log(this.mouse.screen.x, this.mouse.screen.y);
+        console.log(this.mouse.grid.x, this.mouse.grid.y);
+    }
+
     /* 
     **  Mount this Component
     **  Initialize listeners and call draw()
@@ -310,6 +466,14 @@ class Canvas extends Component {
         const collapsibles = document.getElementsByClassName("collapsible");
         for (let i = 0; i < collapsibles.length; ++i) {
             collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
+        }
+
+        const gates = document.getElementsByClassName("gate");
+        for (let i = 0; i < gates.length; ++i) {
+            console.log("adding event listener");
+            gates[i].addEventListener('dragstart', (i) => this.dragStart(i));
+            //gates[i].addEventListener('drag', (i) => this.dragHandler(i));
+            gates[i].addEventListener('dragend', (i) => this.dragEnd(i));
         }
 
         // Make call to draw() method
@@ -341,7 +505,7 @@ class Canvas extends Component {
 
                         <button type="button" class="collapsible">Gates</button>
                         <div class="content">
-                            <div class="gate" id="And" draggable="true" ondragstart="dragStart(event)">
+                            <div class="gate">
                                 <p> AND Gate
                         {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
                                     <img src={AND} alt="And" height="25" width="40">
