@@ -1,46 +1,56 @@
 import React, { Component } from 'react';
-import SideNav, { Toggle, Nav, NavItem, NavIcon, NavText } from '@trendmicro/react-sidenav';
-import ReactDrawer from 'react-drawer';
+import { Link } from 'react-router-dom';
 import Minimap from 'react-minimap';
+//import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
+
+// Get CSS
 import 'react-minimap/dist/react-minimap.css';
-import MetisMenu from 'react-metismenu';
-import './react-metismenu-standart.css';
+import './canvas.css'
 
-import '@trendmicro/react-sidenav/dist/react-sidenav.css';
-import reactDrawer from 'react-drawer';
-
-const content=[
-	{
-		icon: 'icon-class-name',
-		label: 'MENU',
-		to: '#a-link',
-	
-	},
-	{
-		icon: 'icon-class-name',
-		label: 'Components',
-		content: [
-			{
-			icon: 'icon-class-name',
-			label: 'sub menu item 1.0',
-			to: '#other-link',
-			},
-			{
-			icon: 'icon-class-name',
-			label: 'sub menu item 2.0',
-			to: '#other-link',
-			},
-			
-		],
-	},
-];
-
+// Get Images
+import AND from './images/AND.svg';
+import OR from './images/OR.svg';
+import NOT from './images/NOT.svg';
+import XOR from './images/XOR.svg';
+import NOR from './images/NOR.svg';
+import NAND from './images/NAND.svg';
+import XNOR from './images/XNOR.svg';
 
 class Canvas extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            // Do we even need state variables yet?
+            // circuit: {}
+            circuit: {
+                "component": {
+                    "inputs": [
+                        {
+                            "name": "x",
+                            "type": "static",
+                            "value": true
+                        },
+                        {
+                            "name": "y",
+                            "type": "placeholder"
+                        }
+                    ],
+                    "gates": [
+                        {
+                            "name": "xnor",
+                            "type": "xnor",
+                            "inputs": ["x", "y"]
+                        }
+
+                    ],
+                    "outputs": [
+                        {
+                            "name": "o1",
+                            "type": "static",
+                            "inputs": ["xnor"]
+                        }
+                    ]
+                }
+            }
         };
 
         // Bind functions to this
@@ -49,9 +59,10 @@ class Canvas extends Component {
         this.mouseDown = this.mouseDown.bind(this);
         this.mouseMove = this.mouseMove.bind(this);
         this.mouseUp = this.mouseUp.bind(this);
+        this.openDrawer = this.openDrawer.bind(this);
 
         // Define variables
-        this.zoom = 100;
+        this.zoom = 50;
         this.offset = {
             x: 0,
             y: 0
@@ -70,7 +81,7 @@ class Canvas extends Component {
             scrollAnimation: true,
             zoomAnimation: true
         };
-        this.scrollAnimation = { 
+        this.scrollAnimation = {
             v: 0, // Velocity
             r: 0, // Rate
             animate: false // Animation flag
@@ -82,16 +93,53 @@ class Canvas extends Component {
         this.selecting = null;
         this.dragging = null;
         this.connecting = null;
+        this.animFrameID = null;
+
+        // List of Items on Canvas
+        this.items = [
+            {
+                type: "and",
+                location: {
+                    corner: {
+                        x: 0,
+                        y: 0
+                    },
+                    width: 2
+                },
+                inputs: {
+                    num: 2,
+                    map: []
+                }
+            },
+            {
+                type: "or",
+                location: {
+                    corner: {
+                        x: 10,
+                        y: 2
+                    },
+                    width: 2
+                },
+                inputs: {
+                    num: 2,
+                    map: []
+                }
+            }
+        ];
+    }
+
+    gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
+        return { 
+            x: (x - this.offset.x) * this.zoom, 
+            y: (y + this.offset.y) * this.zoom
+        }
+        
     }
 
     // Draw the Canvas and Elements on it
     draw() {
         const canvas = this.refs.background // Grab the actual canvas element by reference
         const ctx = canvas.getContext("2d") // Create drawing object (context)
-
-        // console.log("DIM: ", canvas.height, canvas.width);
-        // console.log("SCROLL", this.settings.scrollAnimation, this.scrollAnimation.v, this.scrollAnimation.r, this.scrollAnimation.animate);
-        // console.log("ZOOM: ", this.settings.zoomAnimation, this.zoom, this.zoomAnimation);
 
         // Initialize context data
         ctx.imageSmoothingEnabled = true;
@@ -100,30 +148,129 @@ class Canvas extends Component {
 
         // Draw dots
         // if (this.zoom > 24) {
-            // Initialize context fill style
-            ctx.fillStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
-            // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
-            
-            // Draw small dots (boxes) or lines at intervals based on the zoom level
-            for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-                for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-                    ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
-                }
+        // Initialize context fill style
+        ctx.fillStyle = "rgba(200,200,200," + Math.min(1, this.zoom / 100) + ")";
+        // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
+
+        // Draw small dots (boxes) or lines at intervals based on the zoom level
+        for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+            for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+                ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
+            }
+        }
+
+        ctx.strokeStyle = "rgba(50,50,50,100)";
+        ctx.strokeRect(
+            (this.mouse.grid.x - this.offset.x) * this.zoom,
+            (-this.mouse.grid.y + this.offset.y) * this.zoom,
+            (1 * this.zoom),
+            (1 * this.zoom)
+        );
+
+        // Iterate through all elements in the "items" list
+        for (let i = 0; i < this.items.length; ++i) {
+            // Get screen location for item
+            let comp = this.items[i];
+            let location = this.gridToPixel(comp.location.corner.x, comp.location.corner.y);
+
+            // Initialize drawing styles
+            ctx.strokeStyle = "rgba(50,50,50,100)";
+            ctx.lineWidth = this.zoom/10;
+            ctx.fillStyle = "rgba(150,150,150,255)";
+
+            // Draw and fill bounding box
+            ctx.fillRect(
+                location.x + this.zoom/2,
+                location.y + this.zoom/2,
+                (comp.location.width * this.zoom),
+                (comp.inputs.num * this.zoom)
+            );
+            ctx.strokeRect(
+                location.x + this.zoom/2,
+                location.y + this.zoom/2,
+                (comp.location.width * this.zoom),
+                (comp.inputs.num * this.zoom)
+            );
+
+            // Draw output node
+            ctx.beginPath();
+            ctx.moveTo(
+                location.x + this.zoom/2 + (comp.location.width) * this.zoom,
+                location.y + this.zoom/2 + (1/2) * this.zoom
+            );
+            ctx.lineTo(
+                location.x + this.zoom/2 + (comp.location.width) * this.zoom + this.zoom/2,
+                location.y + this.zoom/2 + (1/2) * this.zoom
+            );
+            ctx.stroke();
+
+            // Draw output node part 2
+            ctx.lineWidth = this.zoom/20;
+            ctx.fillStyle = "rgba(150,150,150,255)";
+            ctx.beginPath();
+            ctx.arc(
+                location.x + this.zoom/2 + (comp.location.width) * this.zoom + this.zoom/2,
+                location.y + this.zoom/2 + (1/2) * this.zoom,
+                this.zoom/10,
+                0,
+                2*Math.PI
+            );
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw input nodes
+            for (let j = 0; j < comp.inputs.num; ++j) {
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(50,50,50,100)";
+                ctx.lineWidth = this.zoom/10;
+                ctx.fillStyle = "rgba(150,150,150,255)";
+                ctx.moveTo(
+                    location.x + this.zoom/2,
+                    location.y + (this.zoom * (j+1))
+                );
+                ctx.lineTo(
+                    location.x,
+                    location.y + (this.zoom * (j+1))
+                );
+                ctx.stroke();
+
+                ctx.beginPath();
+                ctx.fillStyle = "rgba(150,150,150,255)";
+                ctx.lineWidth = this.zoom/20;
+                ctx.arc(
+                    location.x,
+                    location.y + (this.zoom * (j+1)),
+                    this.zoom/10,
+                    0,
+                    2*Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
             }
 
-            // Draw lines based on zoom level
-            // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-            //     ctx.beginPath();
-            //     ctx.moveTo(i - this.zoom/24, 0);
-            //     ctx.lineTo(i - this.zoom/24, canvas.height);
-            //     ctx.stroke();
-            // }
-            // for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-            //     ctx.beginPath();
-            //     ctx.moveTo(0, j - this.zoom/24);
-            //     ctx.lineTo(canvas.width, j - this.zoom/24);
-            //     ctx.stroke();
-            // }
+            // Draw label of node
+            ctx.fillStyle = "rgba(0,0,0,255)";
+            ctx.lineWidth = 5;
+            ctx.font = "900 " + this.zoom/3 + "px Arial";
+            ctx.fillText(this.items[i].type, location.x + this.zoom, location.y + this.zoom);
+        }
+        
+        // console.log(this.zoom);
+        // console.log(this.mouse.grid, this.offset);
+
+        // Draw lines based on zoom level
+        // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(i - this.zoom/24, 0);
+        //     ctx.lineTo(i - this.zoom/24, canvas.height);
+        //     ctx.stroke();
+        // }
+        // for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+        //     ctx.beginPath();
+        //     ctx.moveTo(0, j - this.zoom/24);
+        //     ctx.lineTo(canvas.width, j - this.zoom/24);
+        //     ctx.stroke();
+        // }
         // }
 
         // Define line styles based on zoom level (For Later)
@@ -139,7 +286,7 @@ class Canvas extends Component {
             if (this.scrollAnimation.animate && this.settings.scrollAnimation) { // If animation flags are up
                 this.offset.x -= Math.sin(this.scrollAnimation.r) * this.scrollAnimation.v; // Modify x offset by function of rate and velocity
                 this.offset.y += Math.cos(this.scrollAnimation.r) * this.scrollAnimation.v; // Modify y offset by function of rate and velocity
-                
+
                 this.scrollAnimation.v -= this.scrollAnimation.v / 16; // Reduce velocity by 1/16
                 if (this.scrollAnimation.v <= 0.001) { // If velocity falls below a threshold
                     this.scrollAnimation.animate = false; // Deactivate flag
@@ -159,7 +306,7 @@ class Canvas extends Component {
         }
 
         // Request redraw to canvas
-        window.requestAnimationFrame(this.draw);
+        this.animFrameID = window.requestAnimationFrame(this.draw);
     }
 
     // Scroll method for recentering with keys/buttons (To be implemented later)
@@ -197,14 +344,14 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
         // Set the zoomAnimation info (used in draw())
         this.zoomAnimation = Math.min(
             Math.max(
-                this.zoomAnimation - this.zoom / 8 * ((e.deltaX || e.deltaY) > 0 ? .5 : -1), 
-                2), 
+                this.zoomAnimation - this.zoom / 8 * ((e.deltaX || e.deltaY) > 0 ? .5 : -1),
+                2),
             300
         );
 
@@ -218,10 +365,9 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
-
-        console.log("mousedwn", e.which, e.ctrlKey);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        console.log(this.mouse.grid.x, this.mouse.grid.y);
 
         // XXX For whatever reason, without clicking, the event.which default value is 1,
         //     instead of 0. Right now, dragging can only be done by holding ctrl. So, this
@@ -245,10 +391,8 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
-
-        console.log("mousemv", e.which, e.ctrlKey);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
         if (e.which === 1) { // Left-Click
             if (e.ctrlKey) {
@@ -269,14 +413,41 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.mouse.screen.x = e.x;
         this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.round(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.round(-e.y / this.zoom + this.offset.y);
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
         // XXX Like mouseDown, this function doesn't actually do anything after mouseMove due to the
         //     defauly event.which value being 1, not 0. Will adress this later.
         if (e.which === 1 && e.ctrlKey) {
             this.scrollAnimation.animate = false;
         }
+    }
+
+    openDrawer(e) {
+        e.srcElement.classList.toggle("active");
+        var content = e.srcElement.nextElementSibling;
+
+        if (content.style.maxHeight) {
+            content.style.maxHeight = null;
+        } else {
+            content.style.maxHeight = content.scrollHeight + "px";
+        }
+    }
+
+    dragStart(e) {
+        console.log("dragging");
+        console.log(e.clientX);
+    }
+
+    dragEnd(e) {
+        this.mouse.screen.x = e.x;
+        this.mouse.screen.y = e.y;
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        console.log("drag ended");
+        console.log(e.clientX, e.clientY);
+        console.log(this.mouse.screen.x, this.mouse.screen.y);
+        console.log(this.mouse.grid.x, this.mouse.grid.y);
     }
 
     /* 
@@ -292,68 +463,155 @@ class Canvas extends Component {
         canvas.addEventListener('mousemove', this.mouseMove);   // Mouse movement - dragging components, dragging screen
         canvas.addEventListener('mouseup', this.mouseUp);       // Mouse up - dragging screen
 
+        const collapsibles = document.getElementsByClassName("collapsible");
+        for (let i = 0; i < collapsibles.length; ++i) {
+            collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
+        }
+
+        const gates = document.getElementsByClassName("gate");
+        for (let i = 0; i < gates.length; ++i) {
+            console.log("adding event listener");
+            gates[i].addEventListener('dragstart', (i) => this.dragStart(i));
+            //gates[i].addEventListener('drag', (i) => this.dragHandler(i));
+            gates[i].addEventListener('dragend', (i) => this.dragEnd(i));
+        }
+
         // Make call to draw() method
         this.draw();
+    }
+
+    componentWillUnmount() {
+        // Cancel the animation loop for canvas
+        window.cancelAnimationFrame(this.animFrameID);
+
+        // Pass the circuit up to parent
+        this.props.getCircuit(this.state.circuit);
     }
 
     render() {
         return (
             <div>
-		<MetisMenu content={content} activeLinkFromLocation />
-		{/*	<SideNav expanded="true">
-        
-		<SideNav.Toggle />
-		<SideNav.Nav>
-                    <NavItem>
-                        <NavText>Hello</NavText>
-                    </NavItem>
-		    <NavItem>
-			<NavText> Component 2 </NavText>
-		    </NavItem>
-		    <NavItem>
-			<div className = "menu">
-			<button> Component 1 </button>
-			<button> Component 2 </button>
-			<button> Component 3 </button>
-			<button> Component 4 </button>
-		    </div>
-		    </NavItem>
-                    <NavItem>
-                        <reactDrawer
-                            open="false"
-                            position="right"
-                        >
-                            <i onClick={() => {this.open="true"}}></i>
-                            <h2> WHAT </h2>
-                        </reactDrawer>
-                    </NavItem>
-                </SideNav.Nav>
-            </SideNav>
-		*/}
-	<div>
-	<Minimap selector=".area">
-		width={window.innerWidth-5}
-		height={window.innerHeight-200}
-	    
-		{/*<div className="card">
-	    	<h1>Name</h1>
-	    	</div>
-	    <div className="card">
-	    	<h1>Title 2</h1>
-	    	<div className="card">
-	    		<h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
-	    	</div>
-	    </div> */}
+                {/*Menus sidebar*/}
+                <div class="sidenav">
+                    <div>
+                        <button type="button" class="io">Export</button>
 
-		<canvas 
-		class="area"
-                ref="background"
-                width={window.innerWidth - 2} // XXX Cleaner way to fit canvas to screen?
-                height={window.innerHeight - 7}
-                style={{border: '1px solid #000000'}}
-            ></canvas>
-	    </Minimap>
-	</div>
+                        <button type="button" class="io">Upload</button>
+
+                        <button type="button" class="collapsible">Inputs</button>
+                        <div class="content">
+                            <p>Inputs</p>
+                        </div>
+
+                        <button type="button" class="collapsible">Gates</button>
+                        <div class="content">
+                            <div class="gate">
+                                <p> AND Gate
+                        {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
+                                    <img src={AND} alt="And" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> OR Gate
+                        {/* <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40"> */}
+                                    <img src={OR} alt="Or" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> NOR Gate
+                        {/* <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40"> */}
+                                    <img src={NOR} alt="Nor" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> XOR Gate
+                        {/* <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40"> */}
+                                    <img src={XOR} alt="Xor" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> NAND Gate
+                        {/* <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40"> */}
+                                    <img src={NAND} alt="Nand" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> NOT Gate
+                        {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
+                                    <img src={NOT} alt="Not" height="25" width="40">
+                                    </img>
+                                </p>
+                            </div>
+                            <div class="gate">
+                                <p> XNOR Gate
+                        {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
+                                    <img src={XNOR} alt="Xnor" height="25" width="40">
+                                    </img>
+
+                                </p>
+                            </div>
+                        </div>
+
+                        <button type="button" class="collapsible">Outputs</button>
+                        <div class="content">
+                            <p> Outputs </p>
+                        </div>
+                        <button type="button" class="collapsible">Miscellaneous</button>
+                        <div class="content">
+                            <p>Miscellaneous</p>
+                        </div>
+                    </div>
+
+                    <div>
+                        <Link to={{
+                            pathname: './logic',
+                            state: {
+                                circuit: this.state.circuit
+                            }
+                        }}>
+                            <button type="button" class="sidenav-link">See Logic...</button>
+                        </Link>
+                    </div>
+                </div>
+
+                {/*Components tab*/}
+                <div class="comptab">
+                    <button type="button" class="collapsible">Components</button>
+                    <div class="content">
+                        <p>Components</p>
+                    </div>
+                </div>
+
+                {/*Minimap*/}
+                <div>
+                    <Minimap selector=".area">
+                        {/* width={window.innerWidth - 5}
+                        height={window.innerHeight - 200} */}
+
+                        {/*<div className="card">
+                            <h1>Name</h1>
+                            </div>
+                        <div className="card">
+                            <h1>Title 2</h1>
+                            <div className="card">
+                                <h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
+                            </div>
+                        </div> */}
+
+                        <canvas
+                            class="area"
+                            ref="background"
+                            width={window.innerWidth} // XXX Cleaner way to fit canvas to screen?
+                            height={window.innerHeight}
+                            style={{ border: '1px solid #000000' }}
+                        ></canvas>
+                    </Minimap>
+                </div>
             </div>
         )
     }
