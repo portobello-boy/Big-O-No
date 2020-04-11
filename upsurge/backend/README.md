@@ -5,7 +5,7 @@ In here lies the code for the backend framework for Upsurge. This component cont
 Before running this program, ensure that all necessary modules are installed by running `npm i` or `npm install`. Then, run the backend with `npm start` or `npm run start`. By default, this platform will run on port 3001.
 
 ## Usage
-Currently, the backend suports POST calls to several different endpoints. 
+Before running this program, ensure that all necessary modules are installed by running `npm i` or `npm install`. Then, run the backend with `npm start` or `npm run start`. By default, this platform will run on port 3001. There is no browser interface for the backend, so navigating to `localhost:3001` will not show anything other than the generic ExpressJS landing page. However, you will be able to interface with the backend using HTTP requests through such services as `curl` or Postman. We have created a simple Python wrapper for this as well, described later.
 
 ### Boolean Expressions and Evaluations
 The `/exp` endpoint accepts POST requests to evaluate boolean expressions passed as a string. Here is an example of an expected JSON body:
