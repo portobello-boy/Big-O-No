@@ -37,9 +37,15 @@ class Logic extends Component {
 		
 		<form>
 			<label> Truth Table:</label>
-			<textarea class="static" readonly="readonly"> Here is some text</textarea>
+			<textarea class="static" wrap="off" readonly="readonly" cols="15" rows="12" > Here is some text that should be wrapping soon &#10; will that work there as an endline character? I don't know about that either </textarea>
 		</form>
-	
+
+		<form>
+			<label> Bool Expression:
+			<textarea class="fixed" wrap="off" readonly="readonly"> example exp: (a & b) </textarea>
+			</label>
+		</form>
+
 		<div class ="fixed">
 		<Link to ={'./'}>
 			<button1 type="button">Circuit Tester</button1>
