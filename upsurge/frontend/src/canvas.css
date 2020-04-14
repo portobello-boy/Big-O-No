@@ -87,10 +87,39 @@
     background-color: #f1f1f1;
 }
 
-.gate {
-	cursor: pointer;
+.gate{
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
 }
 
 .active, .gate:hover {
 	background-color: #777;
+}
+
+.gate .tooltiptext {
+  visibility: hidden;
+  width: 70px;
+  float: right;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+}
+
+.gate:hover .tooltiptext {
+  visibility: visible;
+  position: fixed;
+  z-index: 1;
+  bottom: 55%;
+  left: 12%;
+}
+
+.area {
+   position: absolute;
+   z-index: 0;
 }

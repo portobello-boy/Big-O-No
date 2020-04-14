@@ -488,6 +488,7 @@ class Canvas extends Component {
         this.props.getCircuit(this.state.circuit);
     }
 
+
     render() {
         return (
             <div>
@@ -505,55 +506,94 @@ class Canvas extends Component {
 
                         <button type="button" class="collapsible">Gates</button>
                         <div class="content">
-                            <div class="gate">
-                                <p> AND Gate
-                        {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
-                                    <img src={AND} alt="And" height="25" width="40">
-                                    </img>
-                                </p>
-                            </div>
-                            <div class="gate">
-                                <p> OR Gate
-                        {/* <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40"> */}
-                                    <img src={OR} alt="Or" height="25" width="40">
-                                    </img>
-                                </p>
-                            </div>
-                            <div class="gate">
-                                <p> NOR Gate
-                        {/* <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40"> */}
-                                    <img src={NOR} alt="Nor" height="25" width="40">
-                                    </img>
-                                </p>
-                            </div>
-                            <div class="gate">
-                                <p> XOR Gate
-                        {/* <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40"> */}
-                                    <img src={XOR} alt="Xor" height="25" width="40">
-                                    </img>
-                                </p>
-                            </div>
-                            <div class="gate">
-                                <p> NAND Gate
-                        {/* <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40"> */}
-                                    <img src={NAND} alt="Nand" height="25" width="40">
-                                    </img>
-                                </p>
-                            </div>
-                            <div class="gate">
-                                <p> NOT Gate
-                        {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
-                                    <img src={NOT} alt="Not" height="25" width="40">
-                                    </img>
-                                </p>
-                            </div>
-                            <div class="gate">
-                                <p> XNOR Gate
-                        {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
-                                    <img src={XNOR} alt="Xnor" height="25" width="40">
-                                    </img>
 
-                                </p>
+			    <div class="tooltip"> 
+                            <div class="gate"> 
+				AND Gate
+                                <img src={AND} alt="And" height="25" width="40">
+                                </img>
+				<span class="tooltiptext"> 
+				Returns true if both inputs are true, false otherwise
+				</span> 
+		            </div>
+                            </div>
+
+			    <p>  </p> {/*newline to seperate gates*/}
+
+			    <div class="tooltip"> 
+                            <div class="gate">
+                                 OR Gate
+                                 <img src={OR} alt="Or" height="25" width="40">
+                                 </img>
+				<span class="tooltiptext"> 
+				Returns true if one input is true, false if neither are true
+				</span>  
+                            </div>
+                            </div>
+
+			    <p>  </p> {/*newline to seperate gates*/}
+
+			    <div class="tooltip"> 
+                            <div class="gate">
+                                NOR Gate
+                                <img src={NOR} alt="Nor" height="25" width="40">
+                                </img>
+				<span class="tooltiptext"> 
+				Returns true if both inputs are false, false otherwise
+				</span>  
+                            </div>
+                            </div>
+
+			    <p>  </p> {/*newline to seperate gates*/}
+
+			    <div class="tooltip"> 
+                            <div class="gate">
+                                XOR Gate
+                                <img src={XOR} alt="Xor" height="25" width="40">
+                                </img>
+				<span class="tooltiptext"> 
+				Returns true if an odd number ofinputs are true, false otherwise
+				</span>  
+                            </div>
+                            </div>
+
+			    <p>  </p> {/*newline to seperate gates*/}
+
+			    <div class="tooltip"> 
+                            <div class="gate">
+                                NAND Gate
+                                <img src={NAND} alt="Nand" height="25" width="40">
+                                </img>
+				<span class="tooltiptext"> 
+				Returns false if both inputs are true, true otherwise
+				</span>  
+                            </div>
+                            </div>
+
+			    <p>  </p> {/*newline to seperate gates*/}
+
+			    <div class="tooltip"> 
+                            <div class="gate">
+                                NOT Gate
+                                <img src={NOT} alt="Not" height="25" width="40">
+                                </img>
+				<span class="tooltiptext"> 
+				Returns true if input is false and false if input is true
+				</span>  
+                            </div>
+                            </div>
+
+			    <p>  </p> {/*newline to seperate gates*/}
+
+			    <div class="tooltip"> 
+                            <div class="gate">
+                                XNOR Gate
+                                <img src={XNOR} alt="Xnor" height="25" width="40">
+                                </img>
+				<span class="tooltiptext"> 
+				Returns false if one input is true and false otherwise
+				</span>  
+                            </div>
                             </div>
                         </div>
 
@@ -590,18 +630,6 @@ class Canvas extends Component {
                 {/*Minimap*/}
                 <div>
                     <Minimap selector=".area">
-                        {/* width={window.innerWidth - 5}
-                        height={window.innerHeight - 200} */}
-
-                        {/*<div className="card">
-                            <h1>Name</h1>
-                            </div>
-                        <div className="card">
-                            <h1>Title 2</h1>
-                            <div className="card">
-                                <h1> Titles never rendered by Minimap ~*~*~*~*~*~*~*~ </h1>
-                            </div>
-                        </div> */}
 
                         <canvas
                             class="area"

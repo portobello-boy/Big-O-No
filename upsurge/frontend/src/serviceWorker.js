@@ -139,3 +139,7 @@ export function unregister() {
       });
   }
 }
+
+export function infoWindow() {
+    console.log("Gate clicked");
+}
