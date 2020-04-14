@@ -93,7 +93,7 @@
   cursor: pointer;
 }
 
-.active, .gate:hover {
+.active, .tooltip:hover {
 	background-color: #777;
 }
 
