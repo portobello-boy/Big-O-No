@@ -93,11 +93,15 @@
   cursor: pointer;
 }
 
+.tooltip {
+  cursor: pointer;
+}
+
 .active, .tooltip:hover {
 	background-color: #777;
 }
 
-.gate .tooltiptext {
+.tooltip .tooltiptext {
   visibility: hidden;
   width: 70px;
   float: right;
@@ -111,7 +115,7 @@
   position: absolute;
 }
 
-.gate:hover .tooltiptext {
+.tooltip:hover .tooltiptext {
   visibility: visible;
   position: fixed;
   z-index: 1;
