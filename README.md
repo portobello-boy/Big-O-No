@@ -176,10 +176,15 @@ Like before, feel free to make more complicated circuits. Refer to the examples 
 ### Testing
 To test the backend, run `npm test` - this will run the test suites located in the `test/` directory. This runs the suite of (currently) 75 test cases testing all the functionality in the `parse.js`, `assignment.js`, and `circuit.js` files. 
 
-To test this manually, use curl commands to send JSON bodies to the specified endpoints. For example, you can use:
+To test this manually, first make sure that the backend is running in a separate tab or window, then use curl commands to send JSON bodies to the specified endpoints (For Linux and Mac, or Invoke-RestMethod for Windows). For example, you can use:
 ```
 curl -X POST -H "Content-Type: application/json" -d '{"expression": "(a and b)"}' localhost:3001/exp
 curl -X POST -H "Content-Type: application/json" -D @path/to/file.json localhost:3001/circuit
+```
+On Windows, curl is an alias for Invoke-WebRequest, so the command line arguments don't translate directly. Instead, this is an example command for manual testing on Windows:
+```
+Invoke-RestMethod -Uri http://localhost:3001/exp -ContentType 'application/json' -Method POST -Body '{"expression": "(a and b)"}'
+
 ```
 
 Included in this directory is a Python wrapper for these curl commands. Here is the syntax for running the Python script:
