@@ -178,7 +178,7 @@ To test the backend, run `npm test` - this will run the test suites located in t
 
 To test this manually, use curl commands to send JSON bodies to the specified endpoints. For example, you can use:
 ```
-curl -X POST -H "Content-Type: application/json" -d {"expression": "(a and b)"} localhost:3001/exp
+curl -X POST -H "Content-Type: application/json" -d '{"expression": "(a and b)"}' localhost:3001/exp
 curl -X POST -H "Content-Type: application/json" -D @path/to/file.json localhost:3001/circuit
 ```
 
