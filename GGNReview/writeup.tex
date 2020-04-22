@@ -1,0 +1,50 @@
+\documentclass[11pt]{article}
+\author{Jordan Berkompas, Jared Cline, Brady Davis, \\ Daniel Millson, Daniel Milstead, Austin Youngerman}
+\date{Spring 2020}
+\title{GGN Testing Writeup}
+\usepackage{amsmath, amsthm, amssymb, amsfonts, physics, mathrsfs, mathtools}
+\usepackage{interval}
+\usepackage{graphicx}
+\usepackage{tabularx}
+\usepackage[letterpaper, margin=1.15in]{geometry}
+\begin{document}
+    \maketitle
+    The first section of this writeup will include the general testing process, including preliminaries, running the program, and reading the code. The second section will go over what each member contributed individually to this process.
+    \section*{Testing Process}
+        \subsection*{Preliminaries - Installation and Running:}
+            Installation instructions were unclear - the dependency on yarn made it difficult for some of our members to test as yarn was difficult to install (but this itself doesn't reflect the project). However, their documentation needed a lot of work. There were multiple pieces of conflicting or confusing information in the READMEs, especially on how to run the backend separate from the frontend. Additionally, there were several separate README files scattered in the directories, with no indication on what information is found where. 
+
+            Regarding running the project, there were some commands which were incorrent. The documentation says that the project can be ran with: yarn start-python. However, this command failed, and we found that the correct command was just: yarn start. 
+
+            Their grammar in the documentation needed work as well. There were unnecessary hyphens and other punctuation which made it hard to interpret some commands.
+
+        \subsection*{Running The Program:}
+            The frontend needs a lot of work, but we won't critique on features that are not yet implemented. However, there are some features which have been implemented but need work. For example, the create connection button on the sketchboard opens the tab for the gates, but clicking on these gates does not work. 
+
+            Similarly, there are errors in the frontend on both Chrome and Firefox. In Firefox, dragging components onto the canvas doesn't work. In Chrome, there are additional giberrish characters around the links to the sketchboard and example pages.
+
+            Regarding the backend, there were numerous errors we encountered. Running the logic.py file, with little documentation, was difficult and created inconsistent errors and crashing (we will attach these errors as images with the file). Additionally, there are gates which have no functionality and are skipped (not and xor gates). Finally, there are commands present in the code which are not presented to the user at runtime (such as the truth table command).
+
+        \subsection*{Code:}
+            The most important issue with their code is the lack of error checking. When their program crashes (which is frequent and unpredictable), there are no meaningful error messages sent to the user. These issues arise from lack of checking input types, return values, and more. Please, please make sure the code handles inputs and exits gracefully when a problem is encountered.
+
+    \section*{Individual Conributions}
+        \subsection*{Jordan Berkompas}
+            Some gates work, XOR and NOT did not from what I could try and test. Outputs and Connections did not have much to them either. Another small issue, there is no way to currently have a gate save when clicking off to another page (like See Examples). One may want to see an example, then go back to the gate they were working on, instead of starting over again
+
+        \subsection*{Jared Cline}
+            When the frontend is run in Chrome, the "New Sketch" and "Examples" buttons in the top right appears surrounded by unexpected characters.
+            I think it's just an encoding issue but the file Layout.js under src/Content/Layout/ is filled with characters like this and should be cleaned up. Drag and Drop appears fully implemented. This is a really important feature, and while I think the gates could have proper images but this is really good. The backend (specifically logic.py) doesn't support NOT or XOR gates. This really appears as an oversight as both XOR and NOT gates have been implemented in gates.py so based on the code that's already been written it should be very easy to add implement these.
+
+        \subsection*{Brady Davis}
+            I found that the yarn command does not work on my Macintosh, therefore I am unable to test out their backend. Also, there is no instructions about how to install "yarn" if one did not already have it. However, even after successfully installing yarn, and running the command in the README, it still fails.
+
+        \subsection*{Daniel Millson}
+            I tested the frontend and backend extensively, and found several ways to crash the programs, but these couldn't be reproduced. There's a lot of unpredictable behavior that arises from lack of error checking, or clean code in general. Additionally tested on different platforms and browsers, and found inconsistencies between them. 
+
+        \subsection*{Daniel Milstead}
+            Some of the gates were not yet implemented in logic.py. While there is a README in the main directory, documentation can be found throughout multiple directories with information on what to install, how to run the front end, and how to run the back end in different files. Putting all of that information in the main README would make it easier for the user to find all of the information they need.
+
+        \subsection*{Austin Youngerman}
+            Drag and drop position is significantly offset from the displayed final position. Repeatedly forces downward adjustments even when none are given.
+\end{document}
