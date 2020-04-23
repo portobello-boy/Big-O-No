@@ -88,6 +88,8 @@
 }
 
 .gate {
+    padding-left: 10px;
+    width: 100%;
 	cursor: pointer;
 }
 
