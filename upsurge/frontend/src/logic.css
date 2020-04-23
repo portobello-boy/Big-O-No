@@ -17,7 +17,7 @@ left: 50px;
 top: 120px;
 height: 50%;
 width: 30%;
-white-space: nowrap;
+white-space: soft;
 overflow: scroll;
 border: 1px solid #AAAAAA;
 }

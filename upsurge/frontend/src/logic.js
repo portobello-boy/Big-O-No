@@ -8,6 +8,9 @@ class Logic extends Component {
             circuit: props.passCircuit,
             evaluation: []
         }
+
+	this.phText = "Here is some text that should be wrapping soon &#10; will that work there as an endline character? I don't know about that either";
+    	this.booltext = "Example boolean: (a OR b)";
     }
 
     componentDidMount() {
@@ -22,10 +25,39 @@ class Logic extends Component {
                 body: JSON.stringify(this.state.circuit)
             })
             .then(res => res.json())
-            .then(res => this.setState({
-                circuit: this.state.circuit,
-                evaluation: res
-            })));
+            .then(res => {
+		this.setState({
+                	circuit: this.state.circuit,
+                	evaluation: res
+            	});
+		this.text = " ";
+		this.truval = " ";
+		this.boolexp = " ";
+		this.xlength = 0;
+		console.log("hi");
+
+		for (let col in this.state.evaluation[0]) {
+			this.xlength = this.state.evaluation[0][col].length;
+			this.text = this.text + "    |    " + col;
+			this.boolexp = this.boolexp + " " + col;
+		}
+		for(let i = 0; i < this.xlength; i++){	
+			this.truval += "\r\n";
+		    	for (let col in this.state.evaluation[0]) {
+				let values = this.state.evaluation[0][col];
+				if(JSON.stringify(values[i]) == "true"){
+					this.truval = this.truval + "         " + 'T';
+				}
+				else{
+					this.truval = this.truval + "         " + 'F';	
+				}
+			}
+		}
+		this.boolexp = this.state.evaluation[0][this.xlength];
+		console.log(this.boolexp);
+		this.phText = this.text + "\r\n" + this.truval;
+		this.forceUpdate();
+	    }));
     }
 
     render() {
@@ -37,12 +69,14 @@ class Logic extends Component {
 		
 		<form>
 			<label> Truth Table:</label>
-			<textarea class="static" wrap="off" readonly="readonly" cols="15" rows="12" > Here is some text that should be wrapping soon &#10; will that work there as an endline character? I don't know about that either </textarea>
+			<textarea class="static" wrap="off" readonly="readonly" cols="15" rows="12" id="table" value={this.phText}> 
+			</textarea>
 		</form>
 
 		<form>
 			<label> Bool Expression:
-			<textarea class="fixed" wrap="off" readonly="readonly"> example exp: (a & b) </textarea>
+			<textarea class="fixed" wrap="off" readonly="readonly" value={this.booltext}>
+			</textarea>
 			</label>
 		</form>
 
