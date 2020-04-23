@@ -94,7 +94,8 @@ class Canvas extends Component {
         this.dragging = null;
         this.connecting = null;
         this.animFrameID = null;
-
+        this.selectedGate = null;
+        this.selectedObject = null;
         // List of Items on Canvas
         this.items = [
             {
@@ -124,7 +125,7 @@ class Canvas extends Component {
                     num: 2,
                     map: []
                 }
-            }
+            },
         ];
     }
 
@@ -361,14 +362,33 @@ class Canvas extends Component {
     mouseDown(e) {
         const canvas = this.refs.background; // Grab canvas from DOM
         canvas.focus(); // Put canvas into focus (not necessary now, maybe later?)
-
+        console.log()
+        
         // Get mouse info from event data
-        this.mouse.screen.x = e.x;
-        this.mouse.screen.y = e.y;
         this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
-        console.log(this.mouse.grid.x, this.mouse.grid.y);
 
+        console.log("E Coords: " + e.x,e.y);
+        console.log("Mouse.Grid Coords: " + this.mouse.grid.x, this.mouse.grid.y);
+
+        if(this.selectedGate != null){
+            let newGate = {
+                type: this.selectedGate,
+                location: {
+                    corner: {
+                        x: this.mouse.grid.x,
+                        y: -this.mouse.grid.y
+                    },
+                    width: 2
+                },
+                inputs: {
+                    num: 2,
+                    map: []
+                }
+            }
+            this.items.push(newGate);
+            //this.selectedGate = null;
+        }
         // XXX For whatever reason, without clicking, the event.which default value is 1,
         //     instead of 0. Right now, dragging can only be done by holding ctrl. So, this
         //     listener doesn't do anything at the moment - it does not trigger mouseMove,
@@ -416,8 +436,9 @@ class Canvas extends Component {
         this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
 
+        console.log("This is a test.");
         // XXX Like mouseDown, this function doesn't actually do anything after mouseMove due to the
-        //     defauly event.which value being 1, not 0. Will adress this later.
+        //     default event.which value being 1, not 0. Will adress this later.
         if (e.which === 1 && e.ctrlKey) {
             this.scrollAnimation.animate = false;
         }
@@ -444,12 +465,18 @@ class Canvas extends Component {
         this.mouse.screen.y = e.y;
         this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+
         console.log("drag ended");
         console.log(e.clientX, e.clientY);
         console.log(this.mouse.screen.x, this.mouse.screen.y);
         console.log(this.mouse.grid.x, this.mouse.grid.y);
     }
+    onGateClick(e){
+        //Set some color or something.
+        this.selectedGate = e.target.id;
+        console.log("The current type is: ",this.selectedGate);
 
+    }
     /* 
     **  Mount this Component
     **  Initialize listeners and call draw()
@@ -465,15 +492,13 @@ class Canvas extends Component {
 
         const collapsibles = document.getElementsByClassName("collapsible");
         for (let i = 0; i < collapsibles.length; ++i) {
-            collapsibles[i].addEventListener('click', (i) => this.openDrawer(i));
+            collapsibles[i].addEventListener('click', (e) => this.openDrawer(e));
         }
 
         const gates = document.getElementsByClassName("gate");
-        for (let i = 0; i < gates.length; ++i) {
+        for (let i = 0; i < gates.length; ++i) {    //dragGate functions for use with moving drawer components onto the canvas. 
             console.log("adding event listener");
-            gates[i].addEventListener('dragstart', (i) => this.dragStart(i));
-            //gates[i].addEventListener('drag', (i) => this.dragHandler(i));
-            gates[i].addEventListener('dragend', (i) => this.dragEnd(i));
+            gates[i].addEventListener('click', (e) => this.onGateClick(e));
         }
 
         // Make call to draw() method
@@ -506,51 +531,51 @@ class Canvas extends Component {
                         <button type="button" class="collapsible">Gates</button>
                         <div class="content">
                             <div class="gate">
-                                <p> AND Gate
+                                <p id="and"> AND Gate
                         {/* <img src="https://circuitverse.org/img/AndGate.svg" alt="And" height="25" width="40"> */}
-                                    <img src={AND} alt="And" height="25" width="40">
+                                    <img src={AND} alt="And" height="25" width="40" id="and">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
-                                <p> OR Gate
+                                <p id="or"> OR Gate
                         {/* <img src="https://circuitverse.org/img/OrGate.svg" alt="Or" height="25" width="40"> */}
-                                    <img src={OR} alt="Or" height="25" width="40">
+                                    <img src={OR} alt="Or" height="25" width="40" id="or">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
-                                <p> NOR Gate
+                                <p id="nor"> NOR Gate
                         {/* <img src="https://circuitverse.org/img/NorGate.svg" alt="Nor" height="25" width="40"> */}
-                                    <img src={NOR} alt="Nor" height="25" width="40">
+                                    <img src={NOR} alt="Nor" height="25" width="40" id="nor">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
-                                <p> XOR Gate
+                                <p id="xor"> XOR Gate
                         {/* <img src="https://circuitverse.org/img/XorGate.svg" alt="Xor" height="25" width="40"> */}
-                                    <img src={XOR} alt="Xor" height="25" width="40">
+                                    <img src={XOR} alt="Xor" height="25" width="40" id="xor">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
-                                <p> NAND Gate
+                                <p id="nand"> NAND Gate
                         {/* <img src="https://circuitverse.org/img/NandGate.svg" alt="Nand" height="25" width="40"> */}
-                                    <img src={NAND} alt="Nand" height="25" width="40">
+                                    <img src={NAND} alt="Nand" height="25" width="40" id="nand">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
-                                <p> NOT Gate
+                                <p id="not"> NOT Gate
                         {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
-                                    <img src={NOT} alt="Not" height="25" width="40">
+                                    <img src={NOT} alt="Not" height="25" width="40" id="not">
                                     </img>
                                 </p>
                             </div>
                             <div class="gate">
-                                <p> XNOR Gate
+                                <p id="xnor"> XNOR Gate
                         {/* <img src="https://circuitverse.org/img/NotGate.svg" alt="Not" height="25" width="40"> */}
-                                    <img src={XNOR} alt="Xnor" height="25" width="40">
+                                    <img src={XNOR} alt="Xnor" height="25" width="40" id="xnor">
                                     </img>
 
                                 </p>
