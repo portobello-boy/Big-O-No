@@ -16,6 +16,16 @@ import NOR from './images/NOR.svg';
 import NAND from './images/NAND.svg';
 import XNOR from './images/XNOR.svg';
 
+let typeMap = {
+    'and': '&',
+    'or': '|',
+    'xor': '^',
+    'not': '!',
+    'nand': '!&',
+    'nor': '!|',
+    'xnor': '!^'
+};
+
 class Canvas extends Component {
     constructor(props) {
         super(props);
@@ -55,10 +65,6 @@ class Canvas extends Component {
 
         // Bind functions to this
         this.draw = this.draw.bind(this);
-        this.mouseZoom = this.mouseZoom.bind(this);
-        this.mouseDown = this.mouseDown.bind(this);
-        this.mouseMove = this.mouseMove.bind(this);
-        this.mouseUp = this.mouseUp.bind(this);
         this.openDrawer = this.openDrawer.bind(this);
 
         // Define variables
@@ -99,31 +105,44 @@ class Canvas extends Component {
         // List of Items on Canvas
         this.items = [
             {
-                type: "and",
+                label: "AND #01",
+                type: "gate",
+                val: "and",
                 location: {
-                    corner: {
-                        x: 0,
-                        y: 0
-                    },
-                    width: 2
+                    x: 10,
+                    y: -5
                 },
-                inputs: {
-                    num: 2,
-                    map: []
-                }
+                dimension: {
+                    width: 2,
+                    height: 2
+                },
+                inputs: ["", ""]
             },
             {
-                type: "or",
+                label: "NOT #01",
+                type: "gate",
+                val: "not",
                 location: {
-                    corner: {
-                        x: 10,
-                        y: 2
-                    },
-                    width: 2
+                    x: 15,
+                    y: -10
                 },
-                inputs: {
-                    num: 2,
-                    map: []
+                dimension: {
+                    width: 1,
+                    height: 1
+                },
+                inputs: [""]
+            },
+            {
+                label: "INPUT #01",
+                type: "input",
+                val: "0",
+                location: {
+                    x: 10,
+                    y: -10
+                },
+                dimension: {
+                    width: 2,
+                    height: 1
                 }
             },
         ];
@@ -132,47 +151,36 @@ class Canvas extends Component {
     gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
         return { 
             x: (x - this.offset.x) * this.zoom, 
-            y: (y + this.offset.y) * this.zoom
+            y: (-y + this.offset.y) * this.zoom
         }
-        
     }
 
-    // Draw the Canvas and Elements on it
-    draw() {
-        const canvas = this.refs.background // Grab the actual canvas element by reference
-        const ctx = canvas.getContext("2d") // Create drawing object (context)
-
+    drawBackground(canvas, ctx) {
         // Initialize context data
         ctx.imageSmoothingEnabled = true;
         ctx.fillStyle = "#fff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw dots
-        // if (this.zoom > 24) {
         // Initialize context fill style
         ctx.fillStyle = "rgba(200,200,200," + Math.min(1, this.zoom / 100) + ")";
-        // ctx.strokeStyle = "rgba(0,0,200," + Math.min(1, this.zoom / 100) + ")";
 
-        // Draw small dots (boxes) or lines at intervals based on the zoom level
-        for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-            for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-                ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
+        if (this.zoom > 24) {
+            // Draw small dots (boxes) or lines at intervals based on the zoom level
+            for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
+                for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
+                    ctx.fillRect(i - this.zoom / 24, j - this.zoom / 24, this.zoom / 12, this.zoom / 12);
+                }
             }
         }
+    }
 
-        ctx.strokeStyle = "rgba(50,50,50,100)";
-        ctx.strokeRect(
-            (this.mouse.grid.x - this.offset.x) * this.zoom,
-            (-this.mouse.grid.y + this.offset.y) * this.zoom,
-            (1 * this.zoom),
-            (1 * this.zoom)
-        );
-
+    drawItems(ctx) {
         // Iterate through all elements in the "items" list
         for (let i = 0; i < this.items.length; ++i) {
             // Get screen location for item
             let comp = this.items[i];
-            let location = this.gridToPixel(comp.location.corner.x, comp.location.corner.y);
+            let location = this.gridToPixel(comp.location.x, comp.location.y);
 
             // Initialize drawing styles
             ctx.strokeStyle = "rgba(50,50,50,100)";
@@ -183,34 +191,34 @@ class Canvas extends Component {
             ctx.fillRect(
                 location.x + this.zoom/2,
                 location.y + this.zoom/2,
-                (comp.location.width * this.zoom),
-                (comp.inputs.num * this.zoom)
+                (comp.dimension.width * this.zoom),
+                (comp.dimension.height * this.zoom)
             );
             ctx.strokeRect(
                 location.x + this.zoom/2,
                 location.y + this.zoom/2,
-                (comp.location.width * this.zoom),
-                (comp.inputs.num * this.zoom)
+                (comp.dimension.width * this.zoom),
+                (comp.dimension.height * this.zoom)
             );
 
             // Draw output node
             ctx.beginPath();
             ctx.moveTo(
-                location.x + this.zoom/2 + (comp.location.width) * this.zoom,
+                location.x + this.zoom/2 + (comp.dimension.width) * this.zoom,
                 location.y + this.zoom/2 + (1/2) * this.zoom
             );
             ctx.lineTo(
-                location.x + this.zoom/2 + (comp.location.width) * this.zoom + this.zoom/2,
+                location.x + this.zoom/2 + (comp.dimension.width) * this.zoom + this.zoom/2,
                 location.y + this.zoom/2 + (1/2) * this.zoom
             );
             ctx.stroke();
 
             // Draw output node part 2
             ctx.lineWidth = this.zoom/20;
-            ctx.fillStyle = "rgba(150,150,150,255)";
+            ctx.fillStyle = "rgba(50,50,50,255)";
             ctx.beginPath();
             ctx.arc(
-                location.x + this.zoom/2 + (comp.location.width) * this.zoom + this.zoom/2,
+                location.x + this.zoom/2 + (comp.dimension.width) * this.zoom + this.zoom/2,
                 location.y + this.zoom/2 + (1/2) * this.zoom,
                 this.zoom/10,
                 0,
@@ -220,68 +228,58 @@ class Canvas extends Component {
             ctx.stroke();
 
             // Draw input nodes
-            for (let j = 0; j < comp.inputs.num; ++j) {
-                ctx.beginPath();
-                ctx.strokeStyle = "rgba(50,50,50,100)";
-                ctx.lineWidth = this.zoom/10;
-                ctx.fillStyle = "rgba(150,150,150,255)";
-                ctx.moveTo(
-                    location.x + this.zoom/2,
-                    location.y + (this.zoom * (j+1))
-                );
-                ctx.lineTo(
-                    location.x,
-                    location.y + (this.zoom * (j+1))
-                );
-                ctx.stroke();
+            if (comp.hasOwnProperty('inputs')) {
+                for (let j = 0; j < comp.inputs.length; ++j) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "rgba(50,50,50,100)";
+                    ctx.lineWidth = this.zoom/10;
+                    ctx.fillStyle = "rgba(150,150,150,255)";
+                    ctx.moveTo(
+                        location.x + this.zoom/2,
+                        location.y + (this.zoom * (j+1))
+                    );
+                    ctx.lineTo(
+                        location.x,
+                        location.y + (this.zoom * (j+1))
+                    );
+                    ctx.stroke();
 
-                ctx.beginPath();
-                ctx.fillStyle = "rgba(150,150,150,255)";
-                ctx.lineWidth = this.zoom/20;
-                ctx.arc(
-                    location.x,
-                    location.y + (this.zoom * (j+1)),
-                    this.zoom/10,
-                    0,
-                    2*Math.PI
-                );
-                ctx.fill();
-                ctx.stroke();
+                    ctx.beginPath();
+                    ctx.fillStyle = "rgba(150,150,150,255)";
+                    ctx.lineWidth = this.zoom/20;
+                    ctx.arc(
+                        location.x,
+                        location.y + (this.zoom * (j+1)),
+                        this.zoom/10,
+                        0,
+                        2*Math.PI
+                    );
+                    ctx.fill();
+                    ctx.stroke();
+                }
             }
 
-            // Draw label of node
-            ctx.fillStyle = "rgba(0,0,0,255)";
+            // Draw node type
+            ctx.textAlign = "center";
+            ctx.fillStyle = "rgba(50,50,50,255)";
             ctx.lineWidth = 5;
-            ctx.font = "900 " + this.zoom/3 + "px Arial";
-            ctx.fillText(this.items[i].type, location.x + this.zoom, location.y + this.zoom);
+            ctx.font = "900 " + 2*this.zoom/3 + "px Arial";
+            ctx.fillText(
+                (typeMap[comp.val] ? typeMap[comp.val] : comp.val), 
+                location.x + ((1 + comp.dimension.width)/2.0)*this.zoom, 
+                location.y + ((4 + 3*comp.dimension.height)/6.0)*this.zoom
+            );
+
+            // Draw node label
+            ctx.textAlign = "start";
+            ctx.fillStyle = "rgba(200,200,200,255)";
+            ctx.lineWidth = 1;
+            ctx.font = "100 " + this.zoom/6 + "px Arial";
+            ctx.fillText(this.items[i].label, location.x + (6*this.zoom/10), location.y + (4*this.zoom)/10 + (comp.dimension.height * this.zoom));
         }
-        
-        // console.log(this.zoom);
-        // console.log(this.mouse.grid, this.offset);
+    }
 
-        // Draw lines based on zoom level
-        // for (let i = (-this.offset.x * this.zoom) % this.zoom; i < canvas.width; i += this.zoom) {
-        //     ctx.beginPath();
-        //     ctx.moveTo(i - this.zoom/24, 0);
-        //     ctx.lineTo(i - this.zoom/24, canvas.height);
-        //     ctx.stroke();
-        // }
-        // for (let j = (this.offset.y * this.zoom) % this.zoom; j < canvas.height; j += this.zoom) {
-        //     ctx.beginPath();
-        //     ctx.moveTo(0, j - this.zoom/24);
-        //     ctx.lineTo(canvas.width, j - this.zoom/24);
-        //     ctx.stroke();
-        // }
-        // }
-
-        // Define line styles based on zoom level (For Later)
-        if (this.zoom > 50) {
-            ctx.lineJoin = "round";
-        } else {
-            ctx.lineJoin = "miter";
-        }
-
-
+    handleMotion() {
         // Handle scrolling animation
         if (this.settings.scrollAnimation) {
             if (this.scrollAnimation.animate && this.settings.scrollAnimation) { // If animation flags are up
@@ -305,6 +303,37 @@ class Canvas extends Component {
             this.offset.y = (this.offset.y + this.mouse.screen.y * (1 / this.zoom - 1 / (this.zoomAnimation))); // See above
             this.zoom = this.zoomAnimation;
         }
+    }
+
+    debugDraw(canvas, ctx) {
+        // Draw Box at Mouse grid location
+        let mousePos = this.gridToPixel(this.mouse.grid.x, this.mouse.grid.y);
+        ctx.strokeStyle = "rgba(50,50,50,100)";
+        ctx.strokeRect(
+            mousePos.x,
+            mousePos.y,
+            (1 * this.zoom),
+            (1 * this.zoom)
+        );
+    }
+
+    // Draw the Canvas and Elements on it
+    draw() {
+        const canvas = this.refs.background // Grab the actual canvas element by reference
+        const ctx = canvas.getContext("2d") // Create drawing object (context)
+
+        // Define line styles based on zoom level (For Later)
+        if (this.zoom > 50) {
+            ctx.lineJoin = "round";
+        } else {
+            ctx.lineJoin = "miter";
+        }
+
+        this.drawBackground(canvas, ctx);
+        this.debugDraw(canvas, ctx);
+
+        this.drawItems(ctx);
+        this.handleMotion();
 
         // Request redraw to canvas
         this.animFrameID = window.requestAnimationFrame(this.draw);
@@ -485,10 +514,10 @@ class Canvas extends Component {
         const canvas = this.refs.background; // Grab the actual canvas element by reference
 
         // Attach event listeners
-        canvas.addEventListener('wheel', this.mouseZoom);       // Mouse wheel zooming
-        canvas.addEventListener('mousedown', this.mouseDown);   // Mouse click - interacting with components, dragging screen
-        canvas.addEventListener('mousemove', this.mouseMove);   // Mouse movement - dragging components, dragging screen
-        canvas.addEventListener('mouseup', this.mouseUp);       // Mouse up - dragging screen
+        canvas.addEventListener('wheel', (e) => this.mouseZoom(e));       // Mouse wheel zooming
+        canvas.addEventListener('mousedown', (e) => this.mouseDown(e));   // Mouse click - interacting with components, dragging screen
+        canvas.addEventListener('mousemove', (e) => this.mouseMove(e));   // Mouse movement - dragging components, dragging screen
+        canvas.addEventListener('mouseup', (e) => this.mouseUp(e));       // Mouse up - dragging screen
 
         const collapsibles = document.getElementsByClassName("collapsible");
         for (let i = 0; i < collapsibles.length; ++i) {
