@@ -15,6 +15,9 @@ import XOR from './images/XOR.svg';
 import NOR from './images/NOR.svg';
 import NAND from './images/NAND.svg';
 import XNOR from './images/XNOR.svg';
+import UNDO from './images/UNDO.png';
+import REDO from './images/REDO.png';
+import RESET from './images/RESET.png';
 
 class Canvas extends Component {
     constructor(props) {
@@ -618,6 +621,29 @@ class Canvas extends Component {
                         </Link>
                     </div>
                 </div>
+
+		<div class="undo">
+		    <button type="button"> 
+                    <img src={UNDO} alt="Undo" height="25" width="30">
+		    </img>
+		    </button>
+		</div>
+
+		<div class="redo">
+		    <button type="button"> 
+                    <img src={REDO} alt="Redo" height="25" width="30">
+		    </img>
+		    </button>
+		</div>
+
+		<div class="reset">
+		    <button type="button"> 
+                    <img src={RESET} alt="Reset" height="25" width="30">
+		    </img>
+		    </button>
+		</div>
+
+
 
                 {/*Components tab*/}
                 <div class="comptab">
