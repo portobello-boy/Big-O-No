@@ -6,6 +6,7 @@ import Minimap from 'react-minimap';
 // Get CSS
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
+import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
 
 // Get Images
 import AND from './images/AND.svg';
@@ -28,6 +29,8 @@ let typeMap = {
     'nor': '!|',
     'xnor': '!^'
 };
+
+const io = require('./io')
 
 class Canvas extends Component {
     constructor(props) {
@@ -367,7 +370,7 @@ class Canvas extends Component {
     //     );
     // }
 
-    /* 
+    /*
     **  Event Listeners
     **  Functions attached to different events and interactions with the canvas
     */
@@ -552,7 +555,7 @@ class Canvas extends Component {
                 {/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-                        <button type="button" class="io">Export</button>
+						<button onClick={io.download} type="button" class="io">Export</button>
 
                         <button type="button" class="io">Upload</button>
 
