@@ -63,6 +63,36 @@
     overflow-x: hidden; /* Disable horizontal scroll */
 }
 
+.undo{
+    width: 50px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 248px;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+}
+
+.redo{
+    width: 50px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 298px;;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+}
+
+.reset{
+    width: 50px; /* Set the width of the sidebar */
+    position: fixed; /* Fixed Sidebar (stay in place on scroll) */
+    z-index: 1; /* Stay on top */
+    top: 0; /* Stay at the top */
+    left: 345px;
+    background-color: #111; /* Black */
+    overflow-x: hidden; /* Disable horizontal scroll */
+}
+
 .collapsible:after {
     content: '\02795'; /* Unicode character for "plus" sign (+) */
     font-size: 13px;
@@ -88,9 +118,44 @@
 }
 
 .gate {
-	cursor: pointer;
+    position: relative;
+    display: inline-block;
+    padding-left: 10px;
+    width: 100%;
+    cursor: pointer;
 }
 
-.active, .gate:hover {
+.tooltip {
+  cursor: pointer;
+}
+
+.active, .tooltip:hover {
 	background-color: #777;
+}
+
+.tooltip .tooltiptext {
+  visibility: hidden;
+  width: 70px;
+  float: right;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+
+  /* Position the tooltip */
+  position: absolute;
+}
+
+.tooltip:hover .tooltiptext {
+  visibility: visible;
+  position: fixed;
+  z-index: 1;
+  bottom: 55%;
+  left: 12%;
+}
+
+.area {
+   position: absolute;
+   z-index: 0;
 }
