@@ -1,0 +1,36 @@
+/*css for circuit tester at the bottom left*/
+div.fixed {
+height: 30px;
+width: 100px;
+position: fixed;
+z-index: 1;
+bottom: 10px;
+left: 0;
+border: 3px solid #A9A9A9;
+}
+
+/*css for the truth table text area */
+textarea.static{
+position: fixed;
+resize: none;
+left: 50px;
+top: 120px;
+height: 50%;
+width: 30%;
+white-space: soft;
+overflow: scroll;
+border: 1px solid #AAAAAA;
+}
+
+/* css for the bool exp block */
+textarea.fixed{
+position: fixed;
+resize: none;
+left: 700px;
+top: 120px;
+height: 7%;
+width: 30%;
+white-space: nowrap;
+overflow: scroll;
+border: 1px solid #AAAAAA;
+}

@@ -562,6 +562,7 @@ class Canvas extends Component {
                         </div>
 
                         <button type="button" class="collapsible">Gates</button>
+
                         <div class="content">
 
 			    <div class="tooltip"> 
