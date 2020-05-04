@@ -115,7 +115,7 @@ class Canvas extends Component {
                     width: 2,
                     height: 2
                 },
-                inputs: ["", ""]
+                inputs: [null, null]
             },
             {
                 label: "NOT #01",
@@ -129,7 +129,7 @@ class Canvas extends Component {
                     width: 1,
                     height: 1
                 },
-                inputs: [""]
+                inputs: [null]
             },
             {
                 label: "INPUT #01",
@@ -140,7 +140,7 @@ class Canvas extends Component {
                     y: -10
                 },
                 dimension: {
-                    width: 2,
+                    width: 1,
                     height: 1
                 }
             }
