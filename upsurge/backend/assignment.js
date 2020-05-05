@@ -136,11 +136,13 @@ function evalTree(tree, assignment)
 // Input: string of boolean expression, optional array of assignments to default
 // Output: object
 // Evaluate a boolean expression string, return object with truth values for variables and output
-function evalExpression(exp, defaults = {})
+function evalExpression(exp, defaultVars = [], defaultAssigns = {})
 {
 	try {
+		let tree, vars, values, table;
+
 		tree = parser.parse(exp);
-		vars = getVars(exp);
+		defaultVars.length == 0 ? vars = getVars(exp) : vars = defaultVars;
 		values = genVals(vars.length);
 		table = {};
 
@@ -149,7 +151,7 @@ function evalExpression(exp, defaults = {})
 		table[exp] = [];
 
 		for (let i = 0; i < values.length; ++i) {
-			assignment = assign(vars, values[i], defaults);
+			assignment = assign(vars, values[i], defaultAssigns);
 			if (!assignment) {
 				continue;
 			}

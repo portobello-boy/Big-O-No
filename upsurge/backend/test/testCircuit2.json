@@ -21,14 +21,12 @@
             {
                 "name": "and1",
                 "type": "and",
-                "inputs": ["x1", "x2"],
-                "outputs": ["or1"]
+                "inputs": ["x1", "x2"]
             },
             {
                 "name": "or1",
                 "type": "or",
-                "inputs": ["and1", "x3"],
-                "outputs": ["o1"]
+                "inputs": ["and1", "x3"]
             }
         ],
         "outputs": [

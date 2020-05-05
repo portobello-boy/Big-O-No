@@ -166,6 +166,10 @@ class Canvas extends Component {
         }
     }
 
+    dist(x1, y1, x2, y2) {
+        return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
+    }
+
     updateMouse(e) {
         this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
         this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
@@ -486,6 +490,25 @@ class Canvas extends Component {
     //     );
     // }
 
+    findNode(loc) {
+        for (let i = 0; i < this.items.length; ++i) {
+            let comp = this.items[i];
+            if (comp.inputs) {
+                for (let i = 0; i < comp.inputs.length; ++i) {
+                    let nodeLoc = {
+                        x: comp.location.x + comp.dimension.width,
+                        y: comp.location.y - (i+1)
+                    }
+                    if (this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y) < 0.5) {
+                        console.log("close", comp.label)
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
     /*
     **  Event Listeners
     **  Functions attached to different events and interactions with the canvas
@@ -520,7 +543,7 @@ class Canvas extends Component {
         } else if (this.selectedNode != null) {
 
         } else {
-            this.selectedCoord = this.mouse.grid;
+            this.selectedNode = this.findNode(this.mouse.gridLiteral);
         }
 
         // XXX For whatever reason, without clicking, the event.which default value is 1,
