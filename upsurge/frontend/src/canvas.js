@@ -38,34 +38,47 @@ class Canvas extends Component {
         this.state = {
             // circuit: {}
             circuit: {
-                "component": {
-                    "inputs": [
-                        {
-                            "name": "x",
-                            "type": "static",
-                            "value": true
-                        },
-                        {
-                            "name": "y",
-                            "type": "placeholder"
-                        }
-                    ],
-                    "gates": [
-                        {
-                            "name": "xnor",
-                            "type": "xnor",
-                            "inputs": ["x", "y"]
-                        }
-
-                    ],
-                    "outputs": [
-                        {
-                            "name": "o1",
-                            "type": "static",
-                            "inputs": ["xnor"]
-                        }
-                    ]
-                }
+            //     "component": {
+            //         "inputs": [
+            //             {
+            //                 "name": "x",
+            //                 "type": "static",
+            //                 "value": true
+            //             },
+            //             {
+            //                 "name": "y",
+            //                 "type": "placeholder"
+            //             },
+            //             {
+            //                 "name": "z",
+            //                 "type": "placeholder"
+            //             }
+            //         ],
+            //         "gates": [
+            //             {
+            //                 "name": "and1",
+            //                 "type": "and",
+            //                 "inputs": ["x", "y"],
+			// },
+            //             {
+            //                 "name": "or1",
+            //                 "type": "or",
+            //                 "inputs": ["and1", "z"],
+			// }
+            //         ],
+            //         "outputs": [
+            //             {
+            //                 "name": "o1",
+            //                 "type": "static",
+            //                 "inputs": ["or1"]
+            //             },
+            //             {
+            //                 "name": "o2",
+            //                 "type": "static",
+            //                 "inputs": ["and1"]
+            //             }
+            //         ]
+            //     }
             }
         };
 
@@ -175,6 +188,9 @@ class Canvas extends Component {
 
         // List of wires
         this.wires = [];
+
+        // Undo Stack
+        this.undoStack = [];
     };
 
     gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
@@ -686,6 +702,8 @@ class Canvas extends Component {
         if (this.selectedGate != null) {
             this.items.push(this.selectedGate);
             this.selectedGate = null;
+
+            this.undoStack.push("gate");
         } else if (this.selectedNode != null) {
             let destNode = this.findNode(this.mouse.gridLiteral);
             if (destNode !== null) {
@@ -705,6 +723,8 @@ class Canvas extends Component {
 
                     this.selectedNode = null;
                     destNode = null;
+
+                    this.undoStack.push("wire");
                 }
             }
         } else {
@@ -829,24 +849,62 @@ class Canvas extends Component {
                 inputs: [null]
             }
         } else {
-            this.selectedGate = {
-                label: "g" + String(this.count + 1),
-                type: type,
-                val: val,
-                location: {
-                    x: this.mouse.grid.x,
-                    y: this.mouse.grid.y
-                },
-                dimension: {
-                    width: 2,
-                    height: 2
-                },
-                inputs: [null, null]
+            if (val == "not") {
+                this.selectedGate = {
+                    label: "g" + String(this.count + 1),
+                    type: type,
+                    val: val,
+                    location: {
+                        x: this.mouse.grid.x,
+                        y: this.mouse.grid.y
+                    },
+                    dimension: {
+                        width: 1,
+                        height: 1
+                    },
+                    inputs: [null]
+                }
+            } else {
+                this.selectedGate = {
+                    label: "g" + String(this.count + 1),
+                    type: type,
+                    val: val,
+                    location: {
+                        x: this.mouse.grid.x,
+                        y: this.mouse.grid.y
+                    },
+                    dimension: {
+                        width: 2,
+                        height: 2
+                    },
+                    inputs: [null, null]
+                }
             }
         }
 
         ++this.count;
     }
+
+    undo(e) {
+        if (this.undoStack.length == 0)
+            return
+        let tmp = this.undoStack[this.undoStack.length-1];
+        this.undoStack.pop()
+
+        if (tmp == "gate")
+            this.items.pop()
+        else
+            this.wires.pop()
+    }
+
+    clearCanvas(e) {
+        this.wires = [];
+        this.items = [];
+        this.setState({
+            circuit: {}
+        });
+    }
+
     /* 
     **  Mount this Component
     **  Initialize listeners and call draw()
@@ -870,6 +928,11 @@ class Canvas extends Component {
             console.log("adding event listener");
             gates[i].addEventListener('click', (e) => this.onGateClick(e));
         }
+
+        const undo = document.getElementById("undo");
+        const reset = document.getElementById("reset");
+        undo.addEventListener('mousedown', (e) => this.undo(e));
+        reset.addEventListener('mousedown', (e) => this.clearCanvas(e));
 
         // Make call to draw() method
         this.draw();
@@ -1030,7 +1093,7 @@ class Canvas extends Component {
                 </div>
 
                 <div class="undo">
-                    <button type="button">
+                    <button type="button" id="undo">
                         <img src={UNDO} alt="Undo" height="25" width="30">
                         </img>
                     </button>
@@ -1044,7 +1107,7 @@ class Canvas extends Component {
                 </div>
 
                 <div class="reset">
-                    <button type="button">
+                    <button type="button" id="reset">
                         <img src={RESET} alt="Reset" height="25" width="30">
                         </img>
                     </button>

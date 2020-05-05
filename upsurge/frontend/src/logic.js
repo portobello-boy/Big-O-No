@@ -28,43 +28,45 @@ class Logic extends Component {
 			.then(res => {
 				this.setState({
 					circuit: this.state.circuit,
-					evaluation: res
-				});
-				this.text = " ";
-				this.truval = " ";
-				this.boolexp = " ";
-				this.xlength = 0;
+                	evaluation: res
+            	});
+		this.text = " ";
+		this.truval = " ";
+		this.boolexp = " ";
+		this.xlength = 0;
+		this.between = "----------------------------------------------------------"
+	
+		let Truthtab = this.state.evaluation[0].table;
 
-				if (this.state.evaluation[0]) {
-					let Truthtab = this.state.evaluation[0].table;
-					console.log(this.state.evaluation[0], Truthtab)
+		for (let col in Truthtab) {
+			this.xlength = Truthtab[col].length;
+		
+			this.text = this.text + "    |    " + col;
+			
+			if (!this.state.evaluation[0].vars.includes(col)) {
+				this.boolexp += "   " + col;
+			}
 
-					for (let col in Truthtab) {
-						console.log(col, Truthtab[col])
-
-						this.xlength = Truthtab[col].length;
-						this.text = this.text + "    |    " + col;
-						this.boolexp = this.boolexp + "    " + col;
-					}
-					for (let i = 0; i < this.xlength; i++) {
-						this.truval += "\r\n";
-						for (let col in Truthtab) {
-							let values = Truthtab[col];
-							if (JSON.stringify(values[i]) == "true") {
-								this.truval = this.truval + "         " + 'T';
-							}
-							else {
-								this.truval = this.truval + "         " + 'F';
-							}
-						}
-					}
+		}
+		for(let i = 0; i < this.xlength; i++){	
+			this.truval += "\r\n";
+		    	for (let col in Truthtab) {
+				let values = Truthtab[col];
+				if(JSON.stringify(values[i]) == "true"){
+					this.truval = this.truval + "    |    " + 'T';
 				}
-				console.log(this.boolexp);
-				this.phText = this.text + "\r\n" + this.truval;
-				this.booltext = this.boolexp;
-				this.forceUpdate();
-			}));
-	}
+				else{
+					this.truval = this.truval + "    |    " + 'F';	
+				}
+			}
+		
+		}
+		console.log(this.boolexp);
+		this.phText = this.text + "\r\n" + this.between + "\r\n" +  this.truval;
+		this.booltext = this.boolexp;
+		this.forceUpdate();
+	    }));
+    }
 
 	render() {
 		console.log(this.state.circuit);
@@ -72,7 +74,6 @@ class Logic extends Component {
 		return (
 			<div>
 				<h1>Logic Page</h1>
-
 				<form>
 					<label> Truth Table:</label>
 					<textarea class="static" wrap="off" readonly="readonly" cols="15" rows="12" id="table" value={this.phText}>
