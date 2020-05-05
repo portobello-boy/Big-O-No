@@ -151,16 +151,18 @@ function isComplete(component)
 // Evaluate a component subcircuit's boolean expression with associated values
 function evaluateComponent(circuit, component)
 {
-    let evals = {};
+    let evals = {table: {}, vars: []};
     let assignment = getCompAssignment(circuit, component);
     // console.log(assignment);
     let expressions = generateComponentExprs(circuit, component);
     for (val in assignment) {
-        evals[val] = [assignment[val]];
+        evals.table[val] = [assignment[val]];
+        if (evals.vars.indexOf(val) == -1)
+            evals.vars.push(val);
     }
     for (expression of expressions) {
         console.log("expression:", expression);
-        evals[expression] = assign.evalTree(parser.parse(expression), assignment);
+        evals.table[expression] = assign.evalTree(parser.parse(expression), assignment);
     }
     return evals;
 }
@@ -179,16 +181,23 @@ function getDefaults(component)
 function evaluateCircuit(circuit)
 {
     let evals = [];
-    let evaluation;
     for (component in circuit) {
         if (isComplete(circuit[component])) {
+            let evaluation = {};
             evaluation = evaluateComponent(circuit, circuit[component]);
             evals.push(evaluation);
         } else {
+            let evaluation = {table: {}, vars: []};
             let expressions = generateComponentExprs(circuit, circuit[component]);
             let defaults = getDefaults(circuit[component]);
+            
             for (expr of expressions) {
-                let evaluation = assign.evalExpression(expr, defaults);
+                let variables = assign.getVars(expr);
+                for (variable of variables) {
+                    if (evaluation.vars.indexOf(variable) == -1)
+                        evaluation.vars.push(variable)
+                }
+                evaluation.table = assign.evalExpression(expr, defaults);
                 evals.push(evaluation);
             }
         }

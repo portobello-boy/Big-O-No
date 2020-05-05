@@ -6,7 +6,7 @@ import Minimap from 'react-minimap';
 // Get CSS
 import 'react-minimap/dist/react-minimap.css';
 import './canvas.css'
-import Draggable, {DraggableCore} from 'react-draggable'; // Both at the same time
+import Draggable, { DraggableCore } from 'react-draggable'; // Both at the same time
 
 // Get Images
 import AND from './images/AND.svg';
@@ -84,6 +84,10 @@ class Canvas extends Component {
                 x: 0,
                 y: 0
             },
+            gridLiteral: {
+                x: 0,
+                y: 0
+            },
             screen: { // Position on screen
                 x: 0,
                 y: 0
@@ -107,7 +111,8 @@ class Canvas extends Component {
         this.connecting = null;
         this.animFrameID = null;
         this.selectedGate = null;
-        this.selectedObject = null;
+        this.selectedNode = null;
+
         // List of Items on Canvas
         this.items = [
             {
@@ -155,10 +160,19 @@ class Canvas extends Component {
     }
 
     gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
-        return { 
-            x: (x - this.offset.x) * this.zoom, 
+        return {
+            x: (x - this.offset.x) * this.zoom,
             y: (-y + this.offset.y) * this.zoom
         }
+    }
+
+    updateMouse(e) {
+        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
+        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        this.mouse.gridLiteral.x = e.x / this.zoom + this.offset.x;
+        this.mouse.gridLiteral.y = -e.y / this.zoom + this.offset.y;
+        this.mouse.screen.x = e.x;
+        this.mouse.screen.y = e.y;
     }
 
     drawBackground(canvas, ctx) {
@@ -181,6 +195,7 @@ class Canvas extends Component {
         }
     }
 
+    // Code Reusability - Copied code for placed items and selected gate
     drawItems(ctx) {
         // Iterate through all elements in the "items" list
         for (let i = 0; i < this.items.length; ++i) {
@@ -190,19 +205,19 @@ class Canvas extends Component {
 
             // Initialize drawing styles
             ctx.strokeStyle = "rgba(50,50,50,100)";
-            ctx.lineWidth = this.zoom/10;
+            ctx.lineWidth = this.zoom / 10;
             ctx.fillStyle = "rgba(150,150,150,255)";
 
             // Draw and fill bounding box
             ctx.fillRect(
-                location.x + this.zoom/2,
-                location.y + this.zoom/2,
+                location.x + this.zoom / 2,
+                location.y + this.zoom / 2,
                 (comp.dimension.width * this.zoom),
                 (comp.dimension.height * this.zoom)
             );
             ctx.strokeRect(
-                location.x + this.zoom/2,
-                location.y + this.zoom/2,
+                location.x + this.zoom / 2,
+                location.y + this.zoom / 2,
                 (comp.dimension.width * this.zoom),
                 (comp.dimension.height * this.zoom)
             );
@@ -210,25 +225,25 @@ class Canvas extends Component {
             // Draw output node
             ctx.beginPath();
             ctx.moveTo(
-                location.x + this.zoom/2 + (comp.dimension.width) * this.zoom,
-                location.y + this.zoom/2 + (1/2) * this.zoom
+                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
+                location.y + this.zoom / 2 + (1 / 2) * this.zoom
             );
             ctx.lineTo(
-                location.x + this.zoom/2 + (comp.dimension.width) * this.zoom + this.zoom/2,
-                location.y + this.zoom/2 + (1/2) * this.zoom
+                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                location.y + this.zoom / 2 + (1 / 2) * this.zoom
             );
             ctx.stroke();
 
             // Draw output node part 2
-            ctx.lineWidth = this.zoom/20;
+            ctx.lineWidth = this.zoom / 20;
             ctx.fillStyle = "rgba(50,50,50,255)";
             ctx.beginPath();
             ctx.arc(
-                location.x + this.zoom/2 + (comp.dimension.width) * this.zoom + this.zoom/2,
-                location.y + this.zoom/2 + (1/2) * this.zoom,
-                this.zoom/10,
+                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                location.y + this.zoom / 2 + (1 / 2) * this.zoom,
+                this.zoom / 10,
                 0,
-                2*Math.PI
+                2 * Math.PI
             );
             ctx.fill();
             ctx.stroke();
@@ -238,27 +253,27 @@ class Canvas extends Component {
                 for (let j = 0; j < comp.inputs.length; ++j) {
                     ctx.beginPath();
                     ctx.strokeStyle = "rgba(50,50,50,100)";
-                    ctx.lineWidth = this.zoom/10;
+                    ctx.lineWidth = this.zoom / 10;
                     ctx.fillStyle = "rgba(150,150,150,255)";
                     ctx.moveTo(
-                        location.x + this.zoom/2,
-                        location.y + (this.zoom * (j+1))
+                        location.x + this.zoom / 2,
+                        location.y + (this.zoom * (j + 1))
                     );
                     ctx.lineTo(
                         location.x,
-                        location.y + (this.zoom * (j+1))
+                        location.y + (this.zoom * (j + 1))
                     );
                     ctx.stroke();
 
                     ctx.beginPath();
                     ctx.fillStyle = "rgba(150,150,150,255)";
-                    ctx.lineWidth = this.zoom/20;
+                    ctx.lineWidth = this.zoom / 20;
                     ctx.arc(
                         location.x,
-                        location.y + (this.zoom * (j+1)),
-                        this.zoom/10,
+                        location.y + (this.zoom * (j + 1)),
+                        this.zoom / 10,
                         0,
-                        2*Math.PI
+                        2 * Math.PI
                     );
                     ctx.fill();
                     ctx.stroke();
@@ -269,19 +284,120 @@ class Canvas extends Component {
             ctx.textAlign = "center";
             ctx.fillStyle = "rgba(50,50,50,255)";
             ctx.lineWidth = 5;
-            ctx.font = "900 " + 2*this.zoom/3 + "px Arial";
+            ctx.font = "900 " + 2 * this.zoom / 3 + "px Arial";
             ctx.fillText(
-                (typeMap[comp.val] ? typeMap[comp.val] : comp.val), 
-                location.x + ((1 + comp.dimension.width)/2.0)*this.zoom, 
-                location.y + ((4 + 3*comp.dimension.height)/6.0)*this.zoom
+                (typeMap[comp.val] ? typeMap[comp.val] : comp.val),
+                location.x + ((1 + comp.dimension.width) / 2.0) * this.zoom,
+                location.y + ((4 + 3 * comp.dimension.height) / 6.0) * this.zoom
             );
 
             // Draw node label
             ctx.textAlign = "start";
             ctx.fillStyle = "rgba(200,200,200,255)";
             ctx.lineWidth = 1;
-            ctx.font = "100 " + this.zoom/6 + "px Arial";
-            ctx.fillText(this.items[i].label, location.x + (6*this.zoom/10), location.y + (4*this.zoom)/10 + (comp.dimension.height * this.zoom));
+            ctx.font = "100 " + this.zoom / 6 + "px Arial";
+            ctx.fillText(this.items[i].label, location.x + (6 * this.zoom / 10), location.y + (4 * this.zoom) / 10 + (comp.dimension.height * this.zoom));
+        }
+
+        if (this.selectedGate != null) {
+            // Get screen location for item
+            let comp = this.selectedGate;
+            let location = this.gridToPixel(comp.location.x, comp.location.y);
+
+            // Initialize drawing styles
+            ctx.strokeStyle = "rgba(50,50,50,0.7)";
+            ctx.lineWidth = this.zoom / 10;
+            ctx.fillStyle = "rgba(150,150,150,0.7)";
+
+            // Draw and fill bounding box
+            ctx.fillRect(
+                location.x + this.zoom / 2,
+                location.y + this.zoom / 2,
+                (comp.dimension.width * this.zoom),
+                (comp.dimension.height * this.zoom)
+            );
+            ctx.strokeRect(
+                location.x + this.zoom / 2,
+                location.y + this.zoom / 2,
+                (comp.dimension.width * this.zoom),
+                (comp.dimension.height * this.zoom)
+            );
+
+            // Draw output node
+            ctx.beginPath();
+            ctx.moveTo(
+                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
+                location.y + this.zoom / 2 + (1 / 2) * this.zoom
+            );
+            ctx.lineTo(
+                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                location.y + this.zoom / 2 + (1 / 2) * this.zoom
+            );
+            ctx.stroke();
+
+            // Draw output node part 2
+            ctx.lineWidth = this.zoom / 20;
+            ctx.fillStyle = "rgba(50,50,50,0.7)";
+            ctx.beginPath();
+            ctx.arc(
+                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                location.y + this.zoom / 2 + (1 / 2) * this.zoom,
+                this.zoom / 10,
+                0,
+                2 * Math.PI
+            );
+            ctx.fill();
+            ctx.stroke();
+
+            // Draw input nodes
+            if (comp.hasOwnProperty('inputs')) {
+                for (let j = 0; j < comp.inputs.length; ++j) {
+                    ctx.beginPath();
+                    ctx.strokeStyle = "rgba(50,50,50,0.7)";
+                    ctx.lineWidth = this.zoom / 10;
+                    ctx.fillStyle = "rgba(150,150,150,0.7)";
+                    ctx.moveTo(
+                        location.x + this.zoom / 2,
+                        location.y + (this.zoom * (j + 1))
+                    );
+                    ctx.lineTo(
+                        location.x,
+                        location.y + (this.zoom * (j + 1))
+                    );
+                    ctx.stroke();
+
+                    ctx.beginPath();
+                    ctx.fillStyle = "rgba(150,150,150,0.7)";
+                    ctx.lineWidth = this.zoom / 20;
+                    ctx.arc(
+                        location.x,
+                        location.y + (this.zoom * (j + 1)),
+                        this.zoom / 10,
+                        0,
+                        2 * Math.PI
+                    );
+                    ctx.fill();
+                    ctx.stroke();
+                }
+            }
+
+            // Draw node type
+            ctx.textAlign = "center";
+            ctx.fillStyle = "rgba(50,50,50,0.7)";
+            ctx.lineWidth = 5;
+            ctx.font = "900 " + 2 * this.zoom / 3 + "px Arial";
+            ctx.fillText(
+                (typeMap[comp.val] ? typeMap[comp.val] : comp.val),
+                location.x + ((1 + comp.dimension.width) / 2.0) * this.zoom,
+                location.y + ((4 + 3 * comp.dimension.height) / 6.0) * this.zoom
+            );
+
+            // Draw node label
+            ctx.textAlign = "start";
+            ctx.fillStyle = "rgba(200,200,200,0.7)";
+            ctx.lineWidth = 1;
+            ctx.font = "100 " + this.zoom / 6 + "px Arial";
+            ctx.fillText(this.selectedGate.label, location.x + (6 * this.zoom / 10), location.y + (4 * this.zoom) / 10 + (comp.dimension.height * this.zoom));
         }
     }
 
@@ -378,10 +494,7 @@ class Canvas extends Component {
         e.preventDefault();
 
         // Get mouse info from event data
-        this.mouse.screen.x = e.x;
-        this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        this.updateMouse(e);
 
         // Set the zoomAnimation info (used in draw())
         this.zoomAnimation = Math.min(
@@ -397,33 +510,19 @@ class Canvas extends Component {
     mouseDown(e) {
         const canvas = this.refs.background; // Grab canvas from DOM
         canvas.focus(); // Put canvas into focus (not necessary now, maybe later?)
-        console.log()
-        
+
         // Get mouse info from event data
-        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        this.updateMouse(e);
 
-        console.log("E Coords: " + e.x,e.y);
-        console.log("Mouse.Grid Coords: " + this.mouse.grid.x, this.mouse.grid.y);
+        if (this.selectedGate != null) {
+            this.items.push(this.selectedGate);
+            this.selectedGate = null;
+        } else if (this.selectedNode != null) {
 
-        if(this.selectedGate != null){
-            let newGate = {
-                type: this.selectedGate,
-                location: {
-                    corner: {
-                        x: this.mouse.grid.x,
-                        y: -this.mouse.grid.y
-                    },
-                    width: 2
-                },
-                inputs: {
-                    num: 2,
-                    map: []
-                }
-            }
-            this.items.push(newGate);
-            //this.selectedGate = null;
+        } else {
+            this.selectedCoord = this.mouse.grid;
         }
+
         // XXX For whatever reason, without clicking, the event.which default value is 1,
         //     instead of 0. Right now, dragging can only be done by holding ctrl. So, this
         //     listener doesn't do anything at the moment - it does not trigger mouseMove,
@@ -444,10 +543,12 @@ class Canvas extends Component {
 
     mouseMove(e) {
         // Get mouse info from event data
-        this.mouse.screen.x = e.x;
-        this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        this.updateMouse(e);
+
+        if (this.selectedGate != null) {
+            this.selectedGate.location.x = this.mouse.grid.x;
+            this.selectedGate.location.y = this.mouse.grid.y;
+        }
 
         if (e.which === 1) { // Left-Click
             if (e.ctrlKey) {
@@ -466,10 +567,7 @@ class Canvas extends Component {
 
     mouseUp(e) {
         // Get mouse info from event data
-        this.mouse.screen.x = e.x;
-        this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        this.updateMouse(e);
 
         console.log("This is a test.");
         // XXX Like mouseDown, this function doesn't actually do anything after mouseMove due to the
@@ -496,21 +594,38 @@ class Canvas extends Component {
     }
 
     dragEnd(e) {
-        this.mouse.screen.x = e.x;
-        this.mouse.screen.y = e.y;
-        this.mouse.grid.x = Math.floor(e.x / this.zoom + this.offset.x);
-        this.mouse.grid.y = Math.ceil(-e.y / this.zoom + this.offset.y);
+        this.updateMouse(e);
 
         console.log("drag ended");
         console.log(e.clientX, e.clientY);
         console.log(this.mouse.screen.x, this.mouse.screen.y);
         console.log(this.mouse.grid.x, this.mouse.grid.y);
     }
-    onGateClick(e){
-        //Set some color or something.
-        this.selectedGate = e.target.id;
-        console.log("The current type is: ",this.selectedGate);
 
+    onGateClick(e) {
+        if (e.target.localName == "img")
+            return; // Return if we click on the image (for now)
+
+        //Set some color or something.
+        this.selectedGate = e.target;
+        console.log("The current type is: ", this.selectedGate);
+        let type = this.selectedGate.className;
+        let val = this.selectedGate.id;
+
+        this.selectedGate = {
+            label: "TEMP",
+            type: type,
+            val: val,
+            location: {
+                x: this.mouse.grid.x,
+                y: this.mouse.grid.y
+            },
+            dimension: {
+                width: 2,
+                height: 2
+            },
+            inputs: [null, null]
+        }
     }
     /* 
     **  Mount this Component
@@ -555,7 +670,7 @@ class Canvas extends Component {
                 {/*Menus sidebar*/}
                 <div class="sidenav">
                     <div>
-						<button onClick={io.download} type="button" class="io">Export</button>
+                        <button onClick={io.download} type="button" class="io">Export</button>
 
                         <button type="button" class="io">Upload</button>
 
@@ -568,93 +683,93 @@ class Canvas extends Component {
 
                         <div class="content">
 
-			    <div class="tooltip"> 
-                            <div class="gate"> 
-				AND Gate
+                            <div class="tooltip">
+                                <div class="gate" id="and">
+                                    AND Gate
                                 <img src={AND} alt="And" height="25" width="40">
-                                </img>
-				<span class="tooltiptext"> 
-				Returns true if both inputs are true, false otherwise
-				</span> 
-		            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns true if both inputs are true, false otherwise
+                                    </span>
+                                </div>
                             </div>
 
-			    <p>  </p> {/*newline to seperate gates*/}
+                            <p>  </p> {/*newline to seperate gates*/}
 
-			    <div class="tooltip"> 
-                            <div class="gate">
-                                 OR Gate
+                            <div class="tooltip">
+                                <div class="gate" id="or">
+                                    OR Gate
                                  <img src={OR} alt="Or" height="25" width="40">
-                                 </img>
-				<span class="tooltiptext"> 
-				Returns true if one input is true, false if neither are true
-				</span>  
-                            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns true if one input is true, false if neither are true
+                                    </span>
+                                </div>
                             </div>
 
-			    <p>  </p> {/*newline to seperate gates*/}
+                            <p>  </p> {/*newline to seperate gates*/}
 
-			    <div class="tooltip"> 
-                            <div class="gate">
-                                NOR Gate
+                            <div class="tooltip">
+                                <div class="gate" id="nor">
+                                    NOR Gate
                                 <img src={NOR} alt="Nor" height="25" width="40">
-                                </img>
-				<span class="tooltiptext"> 
-				Returns true if both inputs are false, false otherwise
-				</span>  
-                            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns true if both inputs are false, false otherwise
+                                    </span>
+                                </div>
                             </div>
 
-			    <p>  </p> {/*newline to seperate gates*/}
+                            <p>  </p> {/*newline to seperate gates*/}
 
-			    <div class="tooltip"> 
-                            <div class="gate">
-                                XOR Gate
+                            <div class="tooltip">
+                                <div class="gate" id="xor">
+                                    XOR Gate
                                 <img src={XOR} alt="Xor" height="25" width="40">
-                                </img>
-				<span class="tooltiptext"> 
-				Returns true if an odd number ofinputs are true, false otherwise
-				</span>  
-                            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns true if an odd number ofinputs are true, false otherwise
+                                    </span>
+                                </div>
                             </div>
 
-			    <p>  </p> {/*newline to seperate gates*/}
+                            <p>  </p> {/*newline to seperate gates*/}
 
-			    <div class="tooltip"> 
-                            <div class="gate">
-                                NAND Gate
+                            <div class="tooltip">
+                                <div class="gate" id="nand">
+                                    NAND Gate
                                 <img src={NAND} alt="Nand" height="25" width="40">
-                                </img>
-				<span class="tooltiptext"> 
-				Returns false if both inputs are true, true otherwise
-				</span>  
-                            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns false if both inputs are true, true otherwise
+                                    </span>
+                                </div>
                             </div>
 
-			    <p>  </p> {/*newline to seperate gates*/}
+                            <p>  </p> {/*newline to seperate gates*/}
 
-			    <div class="tooltip"> 
-                            <div class="gate">
-                                NOT Gate
+                            <div class="tooltip">
+                                <div class="gate" id="not">
+                                    NOT Gate
                                 <img src={NOT} alt="Not" height="25" width="40">
-                                </img>
-				<span class="tooltiptext"> 
-				Returns true if input is false and false if input is true
-				</span>  
-                            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns true if input is false and false if input is true
+                                    </span>
+                                </div>
                             </div>
 
-			    <p>  </p> {/*newline to seperate gates*/}
+                            <p>  </p> {/*newline to seperate gates*/}
 
-			    <div class="tooltip"> 
-                            <div class="gate">
-                                XNOR Gate
+                            <div class="tooltip">
+                                <div class="gate" id="xnor">
+                                    XNOR Gate
                                 <img src={XNOR} alt="Xnor" height="25" width="40">
-                                </img>
-				<span class="tooltiptext"> 
-				Returns false if one input is true and false otherwise
-				</span>  
-                            </div>
+                                    </img>
+                                    <span class="tooltiptext">
+                                        Returns false if one input is true and false otherwise
+                                    </span>
+                                </div>
                             </div>
                         </div>
 
@@ -680,26 +795,26 @@ class Canvas extends Component {
                     </div>
                 </div>
 
-		<div class="undo">
-		    <button type="button"> 
-                    <img src={UNDO} alt="Undo" height="25" width="30">
-		    </img>
-		    </button>
-		</div>
+                <div class="undo">
+                    <button type="button">
+                        <img src={UNDO} alt="Undo" height="25" width="30">
+                        </img>
+                    </button>
+                </div>
 
-		<div class="redo">
-		    <button type="button"> 
-                    <img src={REDO} alt="Redo" height="25" width="30">
-		    </img>
-		    </button>
-		</div>
+                <div class="redo">
+                    <button type="button">
+                        <img src={REDO} alt="Redo" height="25" width="30">
+                        </img>
+                    </button>
+                </div>
 
-		<div class="reset">
-		    <button type="button"> 
-                    <img src={RESET} alt="Reset" height="25" width="30">
-		    </img>
-		    </button>
-		</div>
+                <div class="reset">
+                    <button type="button">
+                        <img src={RESET} alt="Reset" height="25" width="30">
+                        </img>
+                    </button>
+                </div>
 
 
 
