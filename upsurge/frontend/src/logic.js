@@ -34,17 +34,16 @@ class Logic extends Component {
 		this.truval = " ";
 		this.boolexp = " ";
 		this.xlength = 0;
-		console.log("hi");
-
-		for (let col in this.state.evaluation[0]) {
-			this.xlength = this.state.evaluation[0][col].length;
+		
+		for (let col in this.state.evaluation[0].table) {
+			this.xlength = this.state.evaluation[0].table[col].length;
 			this.text = this.text + "    |    " + col;
-			this.boolexp = this.boolexp + " " + col;
+			this.boolexp = this.boolexp + "    " + col;
 		}
 		for(let i = 0; i < this.xlength; i++){	
 			this.truval += "\r\n";
-		    	for (let col in this.state.evaluation[0]) {
-				let values = this.state.evaluation[0][col];
+		    	for (let col in this.state.evaluation[0].table) {
+				let values = this.state.evaluation[0].table[col];
 				if(JSON.stringify(values[i]) == "true"){
 					this.truval = this.truval + "         " + 'T';
 				}
@@ -53,9 +52,9 @@ class Logic extends Component {
 				}
 			}
 		}
-		this.boolexp = this.state.evaluation[0][this.xlength];
 		console.log(this.boolexp);
 		this.phText = this.text + "\r\n" + this.truval;
+		this.booltext = this.boolexp;
 		this.forceUpdate();
 	    }));
     }

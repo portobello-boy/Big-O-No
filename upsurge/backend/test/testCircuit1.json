@@ -11,8 +11,7 @@
             {
                 "name": "not1",
                 "type": "not",
-                "inputs": ["x1"],
-                "outputs": ["o1"]
+                "inputs": ["x1"]
             }
         ],
         "outputs": [

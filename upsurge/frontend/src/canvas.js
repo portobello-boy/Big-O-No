@@ -112,58 +112,80 @@ class Canvas extends Component {
         this.animFrameID = null;
         this.selectedGate = null;
         this.selectedNode = null;
+        this.count = 0;
 
         // List of Items on Canvas
         this.items = [
-            {
-                label: "AND #01",
-                type: "gate",
-                val: "and",
-                location: {
-                    x: 10,
-                    y: -5
-                },
-                dimension: {
-                    width: 2,
-                    height: 2
-                },
-                inputs: [null, null]
-            },
-            {
-                label: "NOT #01",
-                type: "gate",
-                val: "not",
-                location: {
-                    x: 15,
-                    y: -10
-                },
-                dimension: {
-                    width: 1,
-                    height: 1
-                },
-                inputs: [null]
-            },
-            {
-                label: "INPUT #01",
-                type: "input",
-                val: "0",
-                location: {
-                    x: 10,
-                    y: -10
-                },
-                dimension: {
-                    width: 1,
-                    height: 1
-                }
-            },
+            // {
+            //     label: "AND#01",
+            //     type: "gate",
+            //     val: "and",
+            //     location: {
+            //         x: 10,
+            //         y: -5
+            //     },
+            //     dimension: {
+            //         width: 2,
+            //         height: 2
+            //     },
+            //     inputs: [null, null]
+            // },
+            // {
+            //     label: "NOT#01",
+            //     type: "gate",
+            //     val: "not",
+            //     location: {
+            //         x: 15,
+            //         y: -10
+            //     },
+            //     dimension: {
+            //         width: 1,
+            //         height: 1
+            //     },
+            //     inputs: [null]
+            // },
+            // {
+            //     label: "INPUT#01",
+            //     type: "input",
+            //     val: "0",
+            //     location: {
+            //         x: 10,
+            //         y: -10
+            //     },
+            //     dimension: {
+            //         width: 1,
+            //         height: 1
+            //     }
+            // },
+            // {
+            //     label: "OUTPUT#01",
+            //     type: "output",
+            //     val: "-",
+            //     location: {
+            //         x: 18,
+            //         y: -10
+            //     },
+            //     dimension: {
+            //         width: 1,
+            //         height: 1
+            //     },
+            //     inputs: [null]
+            // }
         ];
-    }
+
+        // List of wires
+        this.wires = [];
+    };
 
     gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
         return {
             x: (x - this.offset.x) * this.zoom,
             y: (-y + this.offset.y) * this.zoom
         }
+    }
+
+    dist(x1, y1, x2, y2) {
+        return Math.sqrt((x1-x2)**2 + (y1-y2)**2);
     }
 
     updateMouse(e) {
@@ -195,6 +217,26 @@ class Canvas extends Component {
         }
     }
 
+    drawWires(ctx) {
+        for (let i = 0; i < this.wires.length; ++i) {
+            let wire = this.wires[i];
+
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(100,0,0,0.5)";
+            ctx.lineWidth = "5";
+
+            let initLoc = this.gridToPixel(wire[0].x, wire[0].y);
+            ctx.moveTo(initLoc.x, initLoc.y);
+
+            for (let j = 1; j < wire.length; ++j) {
+                let nextLoc = this.gridToPixel(wire[j].x, wire[j].y);
+                ctx.lineTo(nextLoc.x, nextLoc.y);
+            }
+
+            ctx.stroke();
+        }
+    }
+
     // Code Reusability - Copied code for placed items and selected gate
     drawItems(ctx) {
         // Iterate through all elements in the "items" list
@@ -222,31 +264,33 @@ class Canvas extends Component {
                 (comp.dimension.height * this.zoom)
             );
 
-            // Draw output node
-            ctx.beginPath();
-            ctx.moveTo(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom
-            );
-            ctx.lineTo(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom
-            );
-            ctx.stroke();
+            if (comp.type != "output") {
+                // Draw output node
+                ctx.beginPath();
+                ctx.moveTo(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom
+                );
+                ctx.lineTo(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom
+                );
+                ctx.stroke();
 
-            // Draw output node part 2
-            ctx.lineWidth = this.zoom / 20;
-            ctx.fillStyle = "rgba(50,50,50,255)";
-            ctx.beginPath();
-            ctx.arc(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom,
-                this.zoom / 10,
-                0,
-                2 * Math.PI
-            );
-            ctx.fill();
-            ctx.stroke();
+                // Draw output node part 2
+                ctx.lineWidth = this.zoom / 20;
+                ctx.fillStyle = "rgba(50,50,50,255)";
+                ctx.beginPath();
+                ctx.arc(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom,
+                    this.zoom / 10,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
+            }
 
             // Draw input nodes
             if (comp.hasOwnProperty('inputs')) {
@@ -323,31 +367,33 @@ class Canvas extends Component {
                 (comp.dimension.height * this.zoom)
             );
 
-            // Draw output node
-            ctx.beginPath();
-            ctx.moveTo(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom
-            );
-            ctx.lineTo(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom
-            );
-            ctx.stroke();
+            if (comp.type != "output") {
+                // Draw output node
+                ctx.beginPath();
+                ctx.moveTo(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom
+                );
+                ctx.lineTo(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom
+                );
+                ctx.stroke();
 
-            // Draw output node part 2
-            ctx.lineWidth = this.zoom / 20;
-            ctx.fillStyle = "rgba(50,50,50,0.7)";
-            ctx.beginPath();
-            ctx.arc(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom,
-                this.zoom / 10,
-                0,
-                2 * Math.PI
-            );
-            ctx.fill();
-            ctx.stroke();
+                // Draw output node part 2
+                ctx.lineWidth = this.zoom / 20;
+                ctx.fillStyle = "rgba(50,50,50,0.7)";
+                ctx.beginPath();
+                ctx.arc(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom,
+                    this.zoom / 10,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
+            }
 
             // Draw input nodes
             if (comp.hasOwnProperty('inputs')) {
@@ -437,6 +483,19 @@ class Canvas extends Component {
             (1 * this.zoom),
             (1 * this.zoom)
         );
+
+        if (this.selectedNode) {
+            let nodePos = this.gridToPixel(this.selectedNode.location.x, this.selectedNode.location.y)
+            ctx.fillStyle = "rgba(100,100,200,0.6)";
+            ctx.arc(
+                nodePos.x,
+                nodePos.y,
+                this.zoom / 6,
+                0,
+                2 * Math.PI
+            );
+            ctx.fill();
+        }
     }
 
     // Draw the Canvas and Elements on it
@@ -454,6 +513,7 @@ class Canvas extends Component {
         this.drawBackground(canvas, ctx);
         this.debugDraw(canvas, ctx);
 
+        this.drawWires(ctx);
         this.drawItems(ctx);
         this.handleMotion();
 
@@ -485,6 +545,115 @@ class Canvas extends Component {
     //         300
     //     );
     // }
+
+    findNode(loc) {
+        for (let i = 0; i < this.items.length; ++i) {
+            let comp = this.items[i];
+            if (comp.inputs) {
+                for (let i = 0; i < comp.inputs.length; ++i) {
+                    let nodeLoc = {
+                        x: comp.location.x,
+                        y: comp.location.y - (i+1)
+                    }
+                    if (this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y) < 0.2) {
+                        console.log("close", comp.label, i)
+                        // console.log(this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y))
+                        return {
+                            type: "input",
+                            label: comp.label,
+                            which: i,
+                            location: nodeLoc
+                        }
+                    }
+                }
+            }
+
+            let nodeLoc = {
+                x: comp.location.x + comp.dimension.width + 1,
+                y: comp.location.y - 1
+            }
+
+            if (this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y) < 0.2) {
+                console.log("close", comp.label)
+                // console.log(this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y))
+                return {
+                    type: "output",
+                    label: comp.label,
+                    location: nodeLoc
+                }
+            }
+        }
+
+        return null;
+    }
+
+    setIO(inputNode, outputNode) {
+        for (let i = 0; i < this.items.length; ++i) {
+            let comp = this.items[i];
+            if (comp.label == inputNode.label) {
+                comp.inputs[inputNode.which] = outputNode.label;
+            }
+        }
+
+        this.generatePath(inputNode.location, outputNode.location);
+        this.generateCircuit();
+    }
+
+    generatePath(inLoc, outLoc)
+    {
+        let wire = [inLoc, outLoc];
+        if (this.wires.indexOf(wire) == -1);
+            this.wires.push(wire);
+
+        console.log(this.wires)
+    }
+
+    generateCircuit()
+    {
+        let component = {
+            "inputs": [],
+            "gates": [],
+            "outputs": []
+        }
+
+        for (let i = 0; i < this.items.length; ++i) {
+            let comp = this.items[i];
+            let obj = {};
+
+            if (comp.type == "input") {
+                obj.name = comp.label;
+                obj.type = "static";
+                parseInt(comp.val) == 0 ? obj.value = false : obj.value = true;
+                component.inputs.push(obj);
+            } else if (comp.type == "gate") {
+                obj.name = comp.label;
+                obj.type = comp.val;
+                obj.inputs = [];
+                for (let input of comp.inputs) {
+                    if (input != null)
+                        obj.inputs.push(input);
+                }
+                component.gates.push(obj);
+            } else if (comp.type == "output") {
+                obj.name = comp.label;
+                obj.type = "static";
+                obj.inputs = [];
+                for (let input of comp.inputs) {
+                    if (input != null)
+                        obj.inputs.push(input);
+                }
+                component.outputs.push(obj);
+            }
+        }
+
+        this.setState({
+            circuit: {
+                component
+            }
+        });
+
+        console.log(this.state)
+    }
 
     /*
     **  Event Listeners
@@ -518,9 +687,28 @@ class Canvas extends Component {
             this.items.push(this.selectedGate);
             this.selectedGate = null;
         } else if (this.selectedNode != null) {
+            let destNode = this.findNode(this.mouse.gridLiteral);
+            if (destNode !== null) {
+                console.log(this.selectedNode)
+                console.log(destNode)
 
+                if (this.selectedNode.type == destNode.type) {
+                    this.selectedNode = null;
+                    destNode = null;
+                } else if (this.selectedNode.label == destNode.label) {
+                    this.selectedNode = null;
+                    destNode = null;
+                } else {
+                    destNode.type == "input" ? this.setIO(destNode, this.selectedNode) : this.setIO(this.selectedNode, destNode)
+                    console.log(this.items)
+                    console.log(this.wires)
+
+                    this.selectedNode = null;
+                    destNode = null;
+                }
+            }
         } else {
-            this.selectedCoord = this.mouse.grid;
+            this.selectedNode = this.findNode(this.mouse.gridLiteral);
         }
 
         // XXX For whatever reason, without clicking, the event.which default value is 1,
@@ -569,7 +757,6 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.updateMouse(e);
 
-        console.log("This is a test.");
         // XXX Like mouseDown, this function doesn't actually do anything after mouseMove due to the
         //     default event.which value being 1, not 0. Will adress this later.
         if (e.which === 1 && e.ctrlKey) {
@@ -612,20 +799,53 @@ class Canvas extends Component {
         let type = this.selectedGate.className;
         let val = this.selectedGate.id;
 
-        this.selectedGate = {
-            label: "TEMP",
-            type: type,
-            val: val,
-            location: {
-                x: this.mouse.grid.x,
-                y: this.mouse.grid.y
-            },
-            dimension: {
-                width: 2,
-                height: 2
-            },
-            inputs: [null, null]
+        if (val == "input") {
+            this.selectedGate = {
+                label: "g" + String(this.count + 1),
+                type: "input",
+                val: 0,
+                location: {
+                    x: this.mouse.grid.x,
+                    y: this.mouse.grid.y
+                },
+                dimension: {
+                    width: 1,
+                    height: 1
+                }
+            }
+        } else if (val == "output") {
+            this.selectedGate = {
+                label: "g" + String(this.count + 1),
+                type: "output",
+                val: "--",
+                location: {
+                    x: this.mouse.grid.x,
+                    y: this.mouse.grid.y
+                },
+                dimension: {
+                    width: 1,
+                    height: 1
+                },
+                inputs: [null]
+            }
+        } else {
+            this.selectedGate = {
+                label: "g" + String(this.count + 1),
+                type: type,
+                val: val,
+                location: {
+                    x: this.mouse.grid.x,
+                    y: this.mouse.grid.y
+                },
+                dimension: {
+                    width: 2,
+                    height: 2
+                },
+                inputs: [null, null]
+            }
         }
+
+        ++this.count;
     }
     /* 
     **  Mount this Component
@@ -676,7 +896,14 @@ class Canvas extends Component {
 
                         <button type="button" class="collapsible">Inputs</button>
                         <div class="content">
-                            <p>Inputs</p>
+                            <div class="tooltip">
+                                <div class="gate" id="input">
+                                    Input Node
+                                    <span class="tooltiptext">
+                                        Creates an input node for the logic circuit
+                                    </span>
+                                </div>
+                            </div>
                         </div>
 
                         <button type="button" class="collapsible">Gates</button>
@@ -775,7 +1002,14 @@ class Canvas extends Component {
 
                         <button type="button" class="collapsible">Outputs</button>
                         <div class="content">
-                            <p> Outputs </p>
+                            <div class="tooltip">
+                                <div class="gate" id="output">
+                                    Output Node
+                                    <span class="tooltiptext">
+                                        Creates an output node for the logic circuit
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                         <button type="button" class="collapsible">Miscellaneous</button>
                         <div class="content">

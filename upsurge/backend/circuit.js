@@ -190,16 +190,22 @@ function evaluateCircuit(circuit)
             let evaluation = {table: {}, vars: []};
             let expressions = generateComponentExprs(circuit, circuit[component]);
             let defaults = getDefaults(circuit[component]);
+            console.log(defaults)
             
+            let vars = [];
             for (expr of expressions) {
                 let variables = assign.getVars(expr);
                 for (variable of variables) {
-                    if (evaluation.vars.indexOf(variable) == -1)
-                        evaluation.vars.push(variable)
+                    if (vars.indexOf(variable) == -1)
+                        vars.push(variable)
                 }
-                evaluation.table = assign.evalExpression(expr, defaults);
-                evals.push(evaluation);
             }
+            evaluation.vars = vars;
+            
+            for (expr of expressions) {
+                evaluation.table = {...evaluation.table, ...assign.evalExpression(expr, defaultVars = vars, defaultAssigns = defaults)};
+            }
+            evals.push(evaluation);
         }
     }
     return evals;
