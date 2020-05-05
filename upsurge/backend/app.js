@@ -34,10 +34,19 @@ app.post('/exp', function(req, res) {
 
   try {
     const table = evaluator.evalExpression(exp);
+    const vars = evaluator.getVars(exp);
+
     console.log(table);
+    console.log(vars);
+
+    let response = {};
+    response.table = table;
+    response.vars = vars;
+
     res.set('Content-Type', 'text/json');
     res.status(200);
-    res.json(table);
+
+    res.json(response);
   } catch (err) {
     console.log(err);
     console.log(errorList[err.val].message);
@@ -58,8 +67,10 @@ app.post('/circuit', function(req, res) {
   const body = req.body;
   try {
     const evaluation = circuit.evaluateCircuit(body);
+
     res.set('Content-Type', 'text/json');
     res.status(200);
+    
     res.json(evaluation);
   } catch (err) {
     console.log(err);
