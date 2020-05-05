@@ -35,11 +35,11 @@ class Logic extends Component {
 		this.boolexp = " ";
 		this.xlength = 0;
 		console.log("hi");
-
+		
 		for (let col in this.state.evaluation[0]) {
 			this.xlength = this.state.evaluation[0][col].length;
 			this.text = this.text + "    |    " + col;
-			this.boolexp = this.boolexp + " " + col;
+			this.boolexp = this.boolexp + "    " + col;
 		}
 		for(let i = 0; i < this.xlength; i++){	
 			this.truval += "\r\n";
@@ -53,9 +53,9 @@ class Logic extends Component {
 				}
 			}
 		}
-		this.boolexp = this.state.evaluation[0][this.xlength];
 		console.log(this.boolexp);
 		this.phText = this.text + "\r\n" + this.truval;
+		this.booltext = this.boolexp;
 		this.forceUpdate();
 	    }));
     }
