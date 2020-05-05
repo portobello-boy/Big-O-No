@@ -194,68 +194,113 @@ describe('test getCompAssignment', () => {
 describe('test evaluateCircuit', () => {
     test('evaluateCircuit tc1', () => {
         expect(circuit.evaluateCircuit(tc1)).toStrictEqual([{
-            'x1': [true],
-            'not x1': [false]
+            "table": {
+                'x1': [true],
+                'not x1': [false]
+            }, 
+            "vars": [
+                "x1"
+            ]
         }])
     });
     
     test('evaluateCircuit tc2', () => {
         expect(circuit.evaluateCircuit(tc2)).toStrictEqual([{
-            'x1': [true],
-            'x2': [false],
-            'x3': [true],
-            '( ( x1 and x2 ) or x3 )': [true]
+            "table": {
+                'x1': [true],
+                'x2': [false],
+                'x3': [true],
+                '( ( x1 and x2 ) or x3 )': [true]
+            },
+            "vars": [
+                "x1", "x2", "x3"
+            ]
         }])
     });
     
     test('evaluateCircuit tc3', () => {
         expect(circuit.evaluateCircuit(tc3)).toStrictEqual([{
-            'x1': [true],
-            'x2': [false],
-            'x3': [false],
-            '( ( x3 or x1 ) or ( x1 and x2 ) )': [true],
-            '( x1 and x2 )': [false]
+            "table": {
+                'x1': [true],
+                'x2': [false],
+                'x3': [false],
+                '( ( x3 or x1 ) or ( x1 and x2 ) )': [true],
+                '( x1 and x2 )': [false]
+            },
+            "vars": [
+                "x1", "x2", "x3"
+            ]
         }])
     });
     
     test('evaluateCircuit tc4', () => {
         expect(circuit.evaluateCircuit(tc4)).toStrictEqual([{
-            'x1': [false],
-            'x2': [false],
-            'x3': [true],
-            '( x1 and x2 )': [false]
+            "table": {
+                'x1': [false],
+                'x2': [false],
+                'x3': [true],
+                '( x1 and x2 )': [false]
+            },
+            "vars": [
+                "x1", "x2", "x3"
+            ]
         }, {
-            'y1': [false, false, true, true],
-            'y2': [false, true, false, true],
-            '( y1 and y2 )': [false, false, false, true]
+            "table": {
+                'y1': [false, false, true, true],
+                'y2': [false, true, false, true],
+                '( y1 and y2 )': [false, false, false, true]
+            },
+            "vars": [
+                "y1", "y2"
+            ]
         }])
     });
     
     test('evaluateCircuit tc5', () => {
         expect(circuit.evaluateCircuit(tc5)).toStrictEqual([{
-            'x1': [true],
-            'x2': [true],
-            'x3': [true],
-            '( ( x1 xor x2 ) and x3 )': [false]
+            "table": {
+                'x1': [true],
+                'x2': [true],
+                'x3': [true],
+                '( ( x1 xor x2 ) and x3 )': [false]
+            },
+            "vars": [
+                "x1", "x2", "x3"
+            ]
         }, {
-            'y1': [false, false, true, true],
-            'y2': [false, true, false, true],
-            '( y1 xor y2 )': [false, true, true, false]
+            "table": {
+                'y1': [false, false, true, true],
+                'y2': [false, true, false, true],
+                '( y1 xor y2 )': [false, true, true, false]
+            },
+            "vars": [
+                "y1", "y2"
+            ]
         }])
     });
     
     test('evaluateCircuit tc6', () => {
         expect(circuit.evaluateCircuit(tc6)).toStrictEqual([{
-            'x1': [true],
-            'x2': [true],
-            'x3': [true],
-            'z1': [true],
-            '( ( ( x1 and x2 ) and z1 ) and x3 )': [true]
+            "table": {
+                'x1': [true],
+                'x2': [true],
+                'x3': [true],
+                'z1': [true],
+                '( ( ( x1 and x2 ) and z1 ) and x3 )': [true]
+            },
+            "vars": [
+                "z1", "x1", "x2", "x3"
+            ]
         }, {
-            'y1': [false, false, true, true],
-            'y2': [false, true, false, true],
-            'z1': [true, true, true, true], 
-            '( ( y1 and y2 ) and z1 )': [false, false, false, true]
+            "table": {
+                'y1': [false, false, true, true],
+                'y2': [false, true, false, true],
+                'z1': [true, true, true, true], 
+                '( ( y1 and y2 ) and z1 )': [false, false, false, true]
+            },
+            "vars": [
+                "y1", "y2", "z1"
+            ]
         }])
     });
 });
