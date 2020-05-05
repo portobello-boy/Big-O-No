@@ -156,8 +156,25 @@ class Canvas extends Component {
                     height: 1
                 }
             },
+            {
+                label: "OUTPUT #01",
+                type: "output",
+                val: "o1",
+                location: {
+                    x: 18,
+                    y: -10
+                },
+                dimension: {
+                    width: 1,
+                    height: 1
+                },
+                inputs: [null]
+            }
         ];
-    }
+
+        // List of wires
+        this.wires = [];
+    };
 
     gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
         return {
@@ -199,6 +216,26 @@ class Canvas extends Component {
         }
     }
 
+    drawWires(ctx) {
+        for (let i = 0; i < this.wires.length; ++i) {
+            let wire = this.wires[i];
+
+            ctx.beginPath();
+            ctx.strokeStyle = "rgba(100,0,0,0.5)";
+            ctx.lineWidth = "5";
+
+            let initLoc = this.gridToPixel(wire[0].x, wire[0].y);
+            ctx.moveTo(initLoc.x, initLoc.y);
+
+            for (let j = 1; j < wire.length; ++j) {
+                let nextLoc = this.gridToPixel(wire[j].x, wire[j].y);
+                ctx.lineTo(nextLoc.x, nextLoc.y);
+            }
+
+            ctx.stroke();
+        }
+    }
+
     // Code Reusability - Copied code for placed items and selected gate
     drawItems(ctx) {
         // Iterate through all elements in the "items" list
@@ -226,31 +263,33 @@ class Canvas extends Component {
                 (comp.dimension.height * this.zoom)
             );
 
-            // Draw output node
-            ctx.beginPath();
-            ctx.moveTo(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom
-            );
-            ctx.lineTo(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom
-            );
-            ctx.stroke();
+            if (comp.type != "output") {
+                // Draw output node
+                ctx.beginPath();
+                ctx.moveTo(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom
+                );
+                ctx.lineTo(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom
+                );
+                ctx.stroke();
 
-            // Draw output node part 2
-            ctx.lineWidth = this.zoom / 20;
-            ctx.fillStyle = "rgba(50,50,50,255)";
-            ctx.beginPath();
-            ctx.arc(
-                location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
-                location.y + this.zoom / 2 + (1 / 2) * this.zoom,
-                this.zoom / 10,
-                0,
-                2 * Math.PI
-            );
-            ctx.fill();
-            ctx.stroke();
+                // Draw output node part 2
+                ctx.lineWidth = this.zoom / 20;
+                ctx.fillStyle = "rgba(50,50,50,255)";
+                ctx.beginPath();
+                ctx.arc(
+                    location.x + this.zoom / 2 + (comp.dimension.width) * this.zoom + this.zoom / 2,
+                    location.y + this.zoom / 2 + (1 / 2) * this.zoom,
+                    this.zoom / 10,
+                    0,
+                    2 * Math.PI
+                );
+                ctx.fill();
+                ctx.stroke();
+            }
 
             // Draw input nodes
             if (comp.hasOwnProperty('inputs')) {
@@ -441,6 +480,19 @@ class Canvas extends Component {
             (1 * this.zoom),
             (1 * this.zoom)
         );
+
+        if (this.selectedNode) {
+            let nodePos = this.gridToPixel(this.selectedNode.location.x, this.selectedNode.location.y)
+            ctx.fillStyle = "rgba(100,100,200,0.6)";
+            ctx.arc(
+                nodePos.x,
+                nodePos.y,
+                this.zoom / 6,
+                0,
+                2 * Math.PI
+            );
+            ctx.fill();
+        }
     }
 
     // Draw the Canvas and Elements on it
@@ -458,6 +510,7 @@ class Canvas extends Component {
         this.drawBackground(canvas, ctx);
         this.debugDraw(canvas, ctx);
 
+        this.drawWires(ctx);
         this.drawItems(ctx);
         this.handleMotion();
 
@@ -496,17 +549,65 @@ class Canvas extends Component {
             if (comp.inputs) {
                 for (let i = 0; i < comp.inputs.length; ++i) {
                     let nodeLoc = {
-                        x: comp.location.x + comp.dimension.width,
+                        x: comp.location.x,
                         y: comp.location.y - (i+1)
                     }
-                    if (this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y) < 0.5) {
-                        console.log("close", comp.label)
+                    if (this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y) < 0.2) {
+                        console.log("close", comp.label, i)
+                        // console.log(this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y))
+                        return {
+                            type: "input",
+                            label: comp.label,
+                            which: i,
+                            location: nodeLoc
+                        }
                     }
+                }
+            }
+
+            let nodeLoc = {
+                x: comp.location.x + comp.dimension.width + 1,
+                y: comp.location.y - 1
+            }
+
+            if (this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y) < 0.2) {
+                console.log("close", comp.label)
+                // console.log(this.dist(nodeLoc.x, nodeLoc.y, loc.x, loc.y))
+                return {
+                    type: "output",
+                    label: comp.label,
+                    location: nodeLoc
                 }
             }
         }
 
         return null;
+    }
+
+    setIO(inputNode, outputNode) {
+        for (let i = 0; i < this.items.length; ++i) {
+            let comp = this.items[i];
+            if (comp.label == inputNode.label) {
+                comp.inputs[inputNode.which] = outputNode.label;
+            }
+        }
+
+        this.generatePath(inputNode.location, outputNode.location);
+        this.generateCircuit();
+    }
+
+    generatePath(inLoc, outLoc)
+    {
+        let wire = [inLoc, outLoc];
+        if (this.wires.indexOf(wire) == -1);
+            this.wires.push(wire);
+
+        console.log(this.wires)
+    }
+
+    generateCircuit()
+    {
+
     }
 
     /*
@@ -541,7 +642,27 @@ class Canvas extends Component {
             this.items.push(this.selectedGate);
             this.selectedGate = null;
         } else if (this.selectedNode != null) {
+            let destNode = this.findNode(this.mouse.gridLiteral);
+            if (destNode !== null) {
+                console.log(this.selectedNode)
+                console.log(destNode)
 
+                if (this.selectedNode.type == destNode.type) {
+                    this.selectedNode = null;
+                    destNode = null;
+                } else if (this.selectedNode.label == destNode.label) {
+                    this.selectedNode = null;
+                    destNode = null;
+                } else {
+                    destNode.type == "input" ? this.setIO(destNode, this.selectedNode) : this.setIO(this.selectedNode, destNode)
+                    console.log(this.items)
+                    // Set output
+                    // Set path
+
+                    this.selectedNode = null;
+                    destNode = null;
+                }
+            }
         } else {
             this.selectedNode = this.findNode(this.mouse.gridLiteral);
         }
@@ -592,7 +713,6 @@ class Canvas extends Component {
         // Get mouse info from event data
         this.updateMouse(e);
 
-        console.log("This is a test.");
         // XXX Like mouseDown, this function doesn't actually do anything after mouseMove due to the
         //     default event.which value being 1, not 0. Will adress this later.
         if (e.which === 1 && e.ctrlKey) {
