@@ -35,12 +35,12 @@ class Logic extends Component {
 		this.boolexp = " ";
 		this.xlength = 0;
 		this.between = "----------------------------------------------------------"
-		console.log("hi");
 	
 		let Truthtab = this.state.evaluation[0].table;
 
 		for (let col in Truthtab) {
 			this.xlength = Truthtab[col].length;
+		
 			this.text = this.text + "    |    " + col;
 			
 			if (!this.state.evaluation[0].vars.includes(col)) {
