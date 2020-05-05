@@ -47,22 +47,37 @@ class Canvas extends Component {
                         },
                         {
                             "name": "y",
-                            "type": "placeholder"
+                            "type": "static",
+                            "value": true
+                        },
+                        {
+                            "name": "z",
+                            "type": "static",
+			    "value": false
                         }
                     ],
                     "gates": [
                         {
-                            "name": "xnor",
-                            "type": "xnor",
-                            "inputs": ["x", "y"]
-                        }
-
+                            "name": "and1",
+                            "type": "and",
+                            "inputs": ["x", "y"],
+			},
+                        {
+                            "name": "or1",
+                            "type": "or",
+                            "inputs": ["and1", "z"],
+			}
                     ],
                     "outputs": [
                         {
                             "name": "o1",
                             "type": "static",
-                            "inputs": ["xnor"]
+                            "inputs": ["or1"]
+                        },
+                        {
+                            "name": "o2",
+                            "type": "static",
+                            "inputs": ["and1"]
                         }
                     ]
                 }
