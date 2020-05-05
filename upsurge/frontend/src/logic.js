@@ -35,15 +35,17 @@ class Logic extends Component {
 		this.boolexp = " ";
 		this.xlength = 0;
 		console.log("hi");
-		
-		for (let col in this.state.evaluation[0]) {
+	
+		let Truthtab = this.state.evaluation[0].table;
+
+		for (let col in Truthtab) {
 			this.xlength = this.state.evaluation[0][col].length;
 			this.text = this.text + "    |    " + col;
 			this.boolexp = this.boolexp + "    " + col;
 		}
 		for(let i = 0; i < this.xlength; i++){	
 			this.truval += "\r\n";
-		    	for (let col in this.state.evaluation[0]) {
+		    	for (let col in Truthtab) {
 				let values = this.state.evaluation[0][col];
 				if(JSON.stringify(values[i]) == "true"){
 					this.truval = this.truval + "         " + 'T';
