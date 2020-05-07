@@ -191,6 +191,9 @@ class Canvas extends Component {
 
         // Undo Stack
         this.undoStack = [];
+
+	//Redo Stack
+	this.redoStack = [];
     };
 
     gridToPixel(x, y) {     //Takes in a position on the grid and returns the pixel for it.
@@ -704,6 +707,7 @@ class Canvas extends Component {
             this.selectedGate = null;
 
             this.undoStack.push("gate");
+	    //this.redoStack.push("gate");
         } else if (this.selectedNode != null) {
             let destNode = this.findNode(this.mouse.gridLiteral);
             if (destNode !== null) {
@@ -725,6 +729,7 @@ class Canvas extends Component {
                     destNode = null;
 
                     this.undoStack.push("wire");
+		    //this.redoStack.push("wire");
                 }
             }
         } else {
@@ -885,18 +890,39 @@ class Canvas extends Component {
         ++this.count;
     }
 
+    //Delete a component from the canvas
     undo(e) {
-        if (this.undoStack.length == 0)
-            return
-        let tmp = this.undoStack[this.undoStack.length-1];
-        this.undoStack.pop()
-
-        if (tmp == "gate")
-            this.items.pop()
-        else
-            this.wires.pop()
+	    if (this.undoStack.length == 0)
+      	      return
+	    let tmp = this.undoStack[this.undoStack.length-1];
+	    this.undoStack.pop()
+	    if (tmp == "gate") {
+		tmp = this.items[this.items.length-1] // Grab the last thing in this.items
+		this.redoStack.push(tmp)
+		this.items.pop()
+            } else {
+		tmp = this.wires[this.wires.length-1] // Grab the last thing in this.items
+		this.redoStack.push(tmp)
+		this.wires.pop()
+	    }
     }
 
+    //Place a component back onto the canvas
+    redo(e) {
+	if (this.redoStack.length == 0)
+            return
+        let tmp = this.redoStack[this.redoStack.length-1];
+	this.redoStack.pop()
+ 	if (typeof(tmp) == 'object') { // Only true if tmp is a gate, since it's a JSON object
+      		this.items.push(tmp)
+		this.undoStack.push("gate")
+   	} else {
+      		this.wires.push(tmp)
+		this.undoStack.push("wire")
+   	}
+     }
+
+    //Clear the entire canvas
     clearCanvas(e) {
         this.wires = [];
         this.items = [];
@@ -931,8 +957,10 @@ class Canvas extends Component {
 
         const undo = document.getElementById("undo");
         const reset = document.getElementById("reset");
+	const redo = document.getElementById("redo");
         undo.addEventListener('mousedown', (e) => this.undo(e));
         reset.addEventListener('mousedown', (e) => this.clearCanvas(e));
+	redo.addEventListener('mousedown', (e) => this.redo(e));
 
         // Make call to draw() method
         this.draw();
@@ -1100,7 +1128,7 @@ class Canvas extends Component {
                 </div>
 
                 <div class="redo">
-                    <button type="button">
+                    <button type="button" id="redo">
                         <img src={REDO} alt="Redo" height="25" width="30">
                         </img>
                     </button>
